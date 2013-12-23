@@ -1,0 +1,14 @@
+{
+  "name": "jonathan-schoonhoven",
+  "description": "A personal website and sandbox for Node + Express + D3",
+  "author": "Jonathan Schoonhoven",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.2.5",
+    "jade": "*"
+  }
+}
