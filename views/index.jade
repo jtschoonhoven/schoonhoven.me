@@ -2,6 +2,7 @@ extends layout
 
 block content
   .container
+    #expand.btn.btn-link.pull-right Toggle Sidebar
     .row
       h1 jonathan<small>.</small>schoonhoven<small>.</small>me
       p A personal website and sandbox for Node + Express + D3
@@ -15,13 +16,27 @@ block content
           li: a(href='#') three
       #content.col-sm-9
         #chartTypes.btn-group.btn-group-sm
-          #toDotMatrix.btn.btn-link Dot Matrix
-          #toTable.btn.btn-link.active Table
+          #toDotMatrix.btn.btn-link(data-value='dotMatrix') Dot Matrix
+          #toTable.btn.btn-link(data-value='table') Table
+          #toBoxAndWhisker.btn.btn-link.active(data-value='boxAndWhisker') Quartiles
         #canvas
       hr
   script
+
     var table = !{tableObj} ;
-    draw(table.reach_report.rows, 'table');
-    $('#chartTypes .btn').click(function(){ $('.btn').not(this).removeClass('active'); $(this).addClass('active'); })
-    $('#toDotMatrix').click(function(){ draw(table.reach_report.rows, 'dotMatrix'); });
-    $('#toTable').click(function(){ draw(table.reach_report.rows, 'table'); });
+
+    draw(table.sign_dist.rows, 'boxAndWhisker');
+
+    $('#chartTypes .btn').click(function(){ 
+      draw(table.sign_dist.rows, $(this).attr('data-value'));
+      $('.btn').not(this).removeClass('active'); 
+      $(this).addClass('active'); 
+    });
+    
+    $('#expand').click(function(){ 
+      $('#sidebar').toggleClass('hidden'); 
+      $('#content').toggleClass('col-sm-9');
+      $('#content').toggleClass('col-sm-12');
+      $(this).toggleClass('active'); 
+    });
+

@@ -55,6 +55,19 @@ function draw(data, chartType){
         .attr('r', 2)
         .style('fill', 'black');
 
+      var text = group.selectAll('text')
+        .data(function(d){ return d; })
+        .enter()
+        .append("text")
+        .attr('x', function(d, i, j){ return scale_x(j); })
+        .attr('y', function(d, i, j){ return scale_y(i); })
+        .attr("dy", -7)
+        .attr("dx", 0)
+        .style("text-anchor", "middle")
+        .text( function(d){ return d.value; } )
+        .style("font", "12px sans-serif")
+        .style("fill","#000");
+
 
       $(window).resize(function(){
 
@@ -78,7 +91,62 @@ function draw(data, chartType){
           //.transition().ease('linear').duration(100)
           .attr('cx', function(d, i, j){ return scale_x(j); })
           .attr('cy', function(d, i){ return scale_y(i); });
+        text
+          .attr('x', function(d, i, j){ return scale_x(j); })
+          .attr('y', function(d, i){ return scale_y(i); });
       });
+    break;
+
+
+    case 'boxAndWhisker':
+
+      var canvas = d3.select('#canvas')
+        .append('svg')
+        .attr('width', canvas_x)
+        .attr('height', canvas_y);
+
+      var group = canvas.selectAll('.group')
+        .data(data)
+        .enter()
+        .append('g')
+        .attr('class', 'group');
+
+      var min = group.selectAll('.min')
+        .data(function(d,i){ return data[i] })
+        .enter()
+        .append('circle')
+        .attr('class', 'min')
+        .attr('cx', function(d, i, j){ return scale_x(0); })
+        .attr('cy', function(d, i){ return scale_y(i); })
+        .attr('r', 2)
+        .style('fill', 'black');
+
+
+      $(window).resize(function(){
+
+        canvas_x = $('#content').width();
+        canvas_y = $(window).height() - 100;
+
+        scale_x
+          .domain([0, data[0].length - 1])
+          .range([margin, canvas_x - margin]);
+
+        scale_y
+          .domain([0, data.length - 1])
+          .range([margin, canvas_y - margin]);
+
+        canvas
+          //.transition().ease('linear').duration(100)
+          .attr('width', canvas_x)
+          .attr('height', canvas_y);
+
+        circles
+          //.transition().ease('linear').duration(100)
+          .attr('cx', function(d, i, j){ return scale_x(j); })
+          .attr('cy', function(d, i){ return scale_y(i); });
+
+      });
+
     break;
 
 
