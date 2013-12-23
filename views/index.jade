@@ -5,6 +5,8 @@ block content
     .row
       h1 jonathan<small>.</small>schoonhoven<small>.</small>me
       p A personal website and sandbox for Node + Express + D3
+      hr
+
     .row
       #sidebar.col-sm-3
         ul.nav.nav-pills.nav-stacked
@@ -12,7 +14,14 @@ block content
           li: a(href='#') two
           li: a(href='#') three
       #content.col-sm-9
+        #chartTypes.btn-group.btn-group-sm
+          #toDotMatrix.btn.btn-link Dot Matrix
+          #toTable.btn.btn-link.active Table
         #canvas
+      hr
   script
     var table = !{tableObj} ;
     draw(table.reach_report.rows, 'table');
+    $('#chartTypes .btn').click(function(){ $('.btn').not(this).removeClass('active'); $(this).addClass('active'); })
+    $('#toDotMatrix').click(function(){ draw(table.reach_report.rows, 'dotMatrix'); });
+    $('#toTable').click(function(){ draw(table.reach_report.rows, 'table'); });

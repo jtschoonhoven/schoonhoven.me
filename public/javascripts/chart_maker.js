@@ -1,6 +1,7 @@
 
 function draw(data, chartType){
 
+  $('#canvas').empty();
 
   var canvas_x = $('#content').width();
   var canvas_y = $(window).height() - 100;

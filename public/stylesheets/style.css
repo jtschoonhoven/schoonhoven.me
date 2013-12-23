@@ -3,13 +3,13 @@ body {
 }
 
 .row {
-  margin:0 30px 50px 30px;
-}
-
-#canvas {
-  overflow: scroll;
+  margin:5px 30px 5px 30px;
 }
 
 li {
   border-bottom: 1px solid #EEE;
+}
+
+#canvas {
+  overflow: scroll;
 }
