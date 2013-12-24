@@ -1,30 +1,39 @@
 
 // expects data like so:
+
 // [[{"name":"users","value":"295355","yLabel":"US"},{"name":"users","value":"295355","yLabel":"CA"}],
 // [{"name":"users","value":"347468","yLabel":"US"},{"name":"users","value":"347468","yLabel":"CA"}]]
+
+// {"title":"matrix", "rows": [[{"name":"n","value":1},{"name":"n","value":2},{"name":"n","value":3}],
+// [{"name":"n","value":4},{"name":"n","value":5},{"name":"n","value":6}],
+// [{"name":"n","value":7},{"name":"n","value":8},{"name":"n","value":9}]]}
 
 function draw(data, chartType){
 
   $('#canvas').empty();
 
-  var canvas_x = $('#content').width();
+  var canvas_x = $('#canvas').width();
   var canvas_y = $(window).height() - 120;
   var margin = 50;
 
   // make object: all keys/values from the data object, sorted & unique
-  var allTheThings = {};
-  allTheThings.keys = Object.keys(data[0][0]);
-  allTheThings.keys.forEach(function(key){
-    allTheThings[key] = [];
+  var tableItems = {};
+  tableItems.xLabel = [];
+  tableItems.yLabel = [];
+  tableItems.keys = Object.keys(data[0][0]);
+  tableItems.keys.forEach(function(key){
+    tableItems[key] = [];
     data.forEach(function(row){
       var i = 0;
       row.forEach(function(item){
-        if(item[key]) { allTheThings[key].push(item[key]) };
+        if(item[key]) { tableItems[key].push(item[key]) };
         i++; 
       });
     });
-    allTheThings[key] = unique(allTheThings[key].sort());
+    tableItems[key] = unique(tableItems[key].sort());
   });
+
+    console.log(tableItems);
 
   var scale_x = d3.scale.linear()
     .domain([0, data[0].length - 1])
@@ -42,7 +51,46 @@ function draw(data, chartType){
         .append('div')
         .text(JSON.stringify(data, null, '\t'));
 
-    break;
+    break; //json
+
+    case 'dotMatrix':
+
+      var canvas = d3.select('#canvas')
+        .append('svg')
+        .attr('width', canvas_x)
+        .attr('height', canvas_y);
+
+      var group = canvas.selectAll('.group')
+        .data(data)
+        .enter()
+        .append('g')
+        .attr('class', 'group')
+        //.attr('transform', function(d,i){ return 'translate(' + scale_x(i) + ',0)'; });
+
+      var circles = group.selectAll('.myCircle')
+        .data(function(d){ return d; })
+        .enter()
+        .append('circle')
+        .attr('class', 'myCircle')
+        .attr('cx', function(d, i, j){ return scale_x(i); })
+        .attr('cy', function(d, i, j){ return scale_y(j); })
+        .attr('r', 2)
+        .style('fill', 'black');
+
+      // var text = group.selectAll('text')
+      //   .data(function(d){ return d; })
+      //   .enter()
+      //   .append("text")
+      //   .attr('x', function(d, i, j){ return scale_x(i); })
+      //   .attr('y', function(d, i, j){ return scale_y(j); })
+      //   .attr("dy", -7)
+      //   .attr("dx", 0)
+      //   .style("text-anchor", "middle")
+      //   .text( function(d){ return d.value; } )
+      //   .style("font", "12px sans-serif")
+      //   .style("fill","#000");
+
+      break; //dotMatrix
 
   }; // end switch
 

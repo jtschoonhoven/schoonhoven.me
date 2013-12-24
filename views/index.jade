@@ -11,33 +11,38 @@ block content
     .row
       #sidebar.col-sm-3
         ul.nav.nav-pills.nav-stacked
-          li(data-value='oneDimension').active: a(href='#') 1-Dimensional Data
-          li(data-value='twoDimension'): a(href='#') 2-Dimensional Data
-          li(data-value='threeDimension'): a(href='#') 3-Dimensional Data
+          li(data-value='oneDimension'): a(href='#') 1-Dimensional A
+          li(data-value='oneDimensionC'): a(href='#') 1-Dimensional B
+          li(data-value='twoDimension').active: a(href='#') 2-Dimensional
+          li(data-value='threeDimensionB'): a(href='#') 3-Dimensional Data
       #content.col-sm-9
         #chartTypes.btn-group.btn-group-sm
-          #toJSON.btn.btn-link.active(data-value='json') JSON
-          #toDotMatrix.btn.btn-link(data-value='dotMatrix') Dot Matrix
+          #toJSON.btn.btn-link(data-value='json') JSON
+          #toDotMatrix.btn.btn-link.active(data-value='dotMatrix') Dot Matrix
           #toTable.btn.btn-link(data-value='table') Table
           #toBoxAndWhisker.btn.btn-link(data-value='boxAndWhisker') Quartiles
         #canvas
       hr
   script
 
-    var table = !{tableObj} ;
+    var table = !{tableObj};
+    var currentData = 'twoDimension';
+    var currentType = 'dotMatrix';
 
-    draw(table.oneDimension.rows, 'json');
+    draw(table[currentData].rows, currentType);
 
     // new chart type
     $('#chartTypes .btn').click(function(){ 
-      draw(table.sign_dist.rows, $(this).attr('data-value'));
+      currentType = $(this).attr('data-value');
+      draw(table[currentData].rows, currentType);
       $('.btn').not(this).removeClass('active'); 
       $(this).addClass('active'); 
     });
 
     // new data set
     $('#sidebar li').click(function(){
-      draw(table[$(this).attr('data-value')].rows, 'json');
+      currentData = $(this).attr('data-value');
+      draw(table[currentData].rows, currentType);
       $('li').not(this).removeClass('active');
       $(this).addClass('active');
       })
