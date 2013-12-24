@@ -11,28 +11,38 @@ block content
     .row
       #sidebar.col-sm-3
         ul.nav.nav-pills.nav-stacked
-          li: a(href='#') one
-          li: a(href='#') two
-          li: a(href='#') three
+          li(data-value='oneDimension').active: a(href='#') 1-Dimensional Data
+          li(data-value='twoDimension'): a(href='#') 2-Dimensional Data
+          li(data-value='threeDimension'): a(href='#') 3-Dimensional Data
       #content.col-sm-9
         #chartTypes.btn-group.btn-group-sm
+          #toJSON.btn.btn-link.active(data-value='json') JSON
           #toDotMatrix.btn.btn-link(data-value='dotMatrix') Dot Matrix
           #toTable.btn.btn-link(data-value='table') Table
-          #toBoxAndWhisker.btn.btn-link.active(data-value='boxAndWhisker') Quartiles
+          #toBoxAndWhisker.btn.btn-link(data-value='boxAndWhisker') Quartiles
         #canvas
       hr
   script
 
     var table = !{tableObj} ;
 
-    draw(table.sign_dist.rows, 'boxAndWhisker');
+    draw(table.oneDimension.rows, 'json');
 
+    // new chart type
     $('#chartTypes .btn').click(function(){ 
       draw(table.sign_dist.rows, $(this).attr('data-value'));
       $('.btn').not(this).removeClass('active'); 
       $(this).addClass('active'); 
     });
+
+    // new data set
+    $('#sidebar li').click(function(){
+      draw(table[$(this).attr('data-value')].rows, 'json');
+      $('li').not(this).removeClass('active');
+      $(this).addClass('active');
+      })
     
+    // toggle widescreen
     $('#expand').click(function(){ 
       $('#sidebar').toggleClass('hidden'); 
       $('#content').toggleClass('col-sm-9');

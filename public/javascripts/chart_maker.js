@@ -1,24 +1,30 @@
 
+// expects data like so:
+// [[{"name":"users","value":"295355","yLabel":"US"},{"name":"users","value":"295355","yLabel":"CA"}],
+// [{"name":"users","value":"347468","yLabel":"US"},{"name":"users","value":"347468","yLabel":"CA"}]]
+
 function draw(data, chartType){
 
   $('#canvas').empty();
 
   var canvas_x = $('#content').width();
-  var canvas_y = $(window).height() - 100;
+  var canvas_y = $(window).height() - 120;
   var margin = 50;
 
-  var allTheValues = [];
-  var allTheNames = [];
-
-  for(var i=0;i<data.length;i++){
-    for(var j=0;j<data[i].length;j++){
-      allTheValues.push(data[i][j].value);
-    };
-  };
-
-  for(var i=0;i<data[0].length; i++){
-    allTheNames.push(data[0][i].name);
-  }
+  // make object: all keys/values from the data object, sorted & unique
+  var allTheThings = {};
+  allTheThings.keys = Object.keys(data[0][0]);
+  allTheThings.keys.forEach(function(key){
+    allTheThings[key] = [];
+    data.forEach(function(row){
+      var i = 0;
+      row.forEach(function(item){
+        if(item[key]) { allTheThings[key].push(item[key]) };
+        i++; 
+      });
+    });
+    allTheThings[key] = unique(allTheThings[key].sort());
+  });
 
   var scale_x = d3.scale.linear()
     .domain([0, data[0].length - 1])
@@ -28,163 +34,182 @@ function draw(data, chartType){
     .domain([0, data.length - 1])
     .range([margin, canvas_y - margin]);
 
-
   switch(chartType){
 
-
-    case 'dotMatrix':
-
-      var canvas = d3.select('#canvas')
-        .append('svg')
-        .attr('width', canvas_x)
-        .attr('height', canvas_y);
-
-      var group = canvas.selectAll('.group')
-        .data(data)
-        .enter()
-        .append('g')
-        .attr('class', 'group');
-
-      var circles = group.selectAll('.myCircle')
-        .data(function(d){ return d; })
-        .enter()
-        .append('circle')
-        .attr('class', 'myCircle')
-        .attr('cx', function(d, i, j){ return scale_x(j); })
-        .attr('cy', function(d, i){ return scale_y(i); })
-        .attr('r', 2)
-        .style('fill', 'black');
-
-      var text = group.selectAll('text')
-        .data(function(d){ return d; })
-        .enter()
-        .append("text")
-        .attr('x', function(d, i, j){ return scale_x(j); })
-        .attr('y', function(d, i, j){ return scale_y(i); })
-        .attr("dy", -7)
-        .attr("dx", 0)
-        .style("text-anchor", "middle")
-        .text( function(d){ return d.value; } )
-        .style("font", "12px sans-serif")
-        .style("fill","#000");
-
-
-      $(window).resize(function(){
-
-        canvas_x = $('#content').width();
-        canvas_y = $(window).height() - 100;
-
-        scale_x
-          .domain([0, data[0].length - 1])
-          .range([margin, canvas_x - margin]);
-
-        scale_y
-          .domain([0, data.length - 1])
-          .range([margin, canvas_y - margin]);
-
-        canvas
-          //.transition().ease('linear').duration(100)
-          .attr('width', canvas_x)
-          .attr('height', canvas_y);
-
-        circles
-          //.transition().ease('linear').duration(100)
-          .attr('cx', function(d, i, j){ return scale_x(j); })
-          .attr('cy', function(d, i){ return scale_y(i); });
-        text
-          .attr('x', function(d, i, j){ return scale_x(j); })
-          .attr('y', function(d, i){ return scale_y(i); });
-      });
-    break;
-
-
-    case 'boxAndWhisker':
+    case 'json':
 
       var canvas = d3.select('#canvas')
-        .append('svg')
-        .attr('width', canvas_x)
-        .attr('height', canvas_y);
-
-      var group = canvas.selectAll('.group')
-        .data(data)
-        .enter()
-        .append('g')
-        .attr('class', 'group');
-
-      var min = group.selectAll('.min')
-        .data(function(d,i){ return data[i] })
-        .enter()
-        .append('circle')
-        .attr('class', 'min')
-        .attr('cx', function(d, i, j){ return scale_x(0); })
-        .attr('cy', function(d, i){ return scale_y(i); })
-        .attr('r', 2)
-        .style('fill', 'black');
-
-
-      $(window).resize(function(){
-
-        canvas_x = $('#content').width();
-        canvas_y = $(window).height() - 100;
-
-        scale_x
-          .domain([0, data[0].length - 1])
-          .range([margin, canvas_x - margin]);
-
-        scale_y
-          .domain([0, data.length - 1])
-          .range([margin, canvas_y - margin]);
-
-        canvas
-          //.transition().ease('linear').duration(100)
-          .attr('width', canvas_x)
-          .attr('height', canvas_y);
-
-        circles
-          //.transition().ease('linear').duration(100)
-          .attr('cx', function(d, i, j){ return scale_x(j); })
-          .attr('cy', function(d, i){ return scale_y(i); });
-
-      });
+        .append('div')
+        .text(JSON.stringify(data, null, '\t'));
 
     break;
 
+  }; // end switch
 
-    default: //table
 
-      var canvas = d3.select('#canvas')
-        .append('table')
-        .attr('width', canvas_x)
-        .attr('height', canvas_y)
-        .attr('class', 'table table-striped table-bordered table-hover table-condensed table-responsive');
+//   switch(chartType){
 
-      var thead = d3.select('table')
-        .append('thead')
-        .append('tr')
 
-      var th = thead.selectAll('th')
-        .data(allTheNames)
-        .enter()
-        .append('th')
-        .text(function(d){ return d });
+//     case 'dotMatrix':
+
+//       var canvas = d3.select('#canvas')
+//         .append('svg')
+//         .attr('width', canvas_x)
+//         .attr('height', canvas_y);
+
+//       var group = canvas.selectAll('.group')
+//         .data(data)
+//         .enter()
+//         .append('g')
+//         .attr('class', 'group');
+
+//       var circles = group.selectAll('.myCircle')
+//         .data(function(d){ return d; })
+//         .enter()
+//         .append('circle')
+//         .attr('class', 'myCircle')
+//         .attr('cx', function(d, i, j){ return scale_x(j); })
+//         .attr('cy', function(d, i){ return scale_y(i); })
+//         .attr('r', 2)
+//         .style('fill', 'black');
+
+//       var text = group.selectAll('text')
+//         .data(function(d){ return d; })
+//         .enter()
+//         .append("text")
+//         .attr('x', function(d, i, j){ return scale_x(j); })
+//         .attr('y', function(d, i, j){ return scale_y(i); })
+//         .attr("dy", -7)
+//         .attr("dx", 0)
+//         .style("text-anchor", "middle")
+//         .text( function(d){ return d.value; } )
+//         .style("font", "12px sans-serif")
+//         .style("fill","#000");
+
+
+//       $(window).resize(function(){
+
+//         canvas_x = $('#content').width();
+//         canvas_y = $(window).height() - 100;
+
+//         scale_x
+//           .domain([0, data[0].length - 1])
+//           .range([margin, canvas_x - margin]);
+
+//         scale_y
+//           .domain([0, data.length - 1])
+//           .range([margin, canvas_y - margin]);
+
+//         canvas
+//           //.transition().ease('linear').duration(100)
+//           .attr('width', canvas_x)
+//           .attr('height', canvas_y);
+
+//         circles
+//           //.transition().ease('linear').duration(100)
+//           .attr('cx', function(d, i, j){ return scale_x(j); })
+//           .attr('cy', function(d, i){ return scale_y(i); });
+//         text
+//           .attr('x', function(d, i, j){ return scale_x(j); })
+//           .attr('y', function(d, i){ return scale_y(i); });
+//       });
+//     break;
+
+
+//     case 'boxAndWhisker':
+
+//       var canvas = d3.select('#canvas')
+//         .append('svg')
+//         .attr('width', canvas_x)
+//         .attr('height', canvas_y);
+
+//       var group = canvas.selectAll('.group')
+//         .data(data)
+//         .enter()
+//         .append('g')
+//         .attr('class', 'group');
+
+//       var min = group.selectAll('.min')
+//         .data(function(d,i){ return data[i] })
+//         .enter()
+//         .append('circle')
+//         .attr('class', 'min')
+//         .attr('cx', function(d, i, j){ return scale_x(0); })
+//         .attr('cy', function(d, i){ return scale_y(i); })
+//         .attr('r', 2)
+//         .style('fill', 'black');
+
+
+//       $(window).resize(function(){
+
+//         canvas_x = $('#content').width();
+//         canvas_y = $(window).height() - 100;
+
+//         scale_x
+//           .domain([0, data[0].length - 1])
+//           .range([margin, canvas_x - margin]);
+
+//         scale_y
+//           .domain([0, data.length - 1])
+//           .range([margin, canvas_y - margin]);
+
+//         canvas
+//           //.transition().ease('linear').duration(100)
+//           .attr('width', canvas_x)
+//           .attr('height', canvas_y);
+
+//         circles
+//           //.transition().ease('linear').duration(100)
+//           .attr('cx', function(d, i, j){ return scale_x(j); })
+//           .attr('cy', function(d, i){ return scale_y(i); });
+
+//       });
+
+//     break;
+
+
+//     default: //table
+
+//       var canvas = d3.select('#canvas')
+//         .append('table')
+//         .attr('width', canvas_x)
+//         .attr('height', canvas_y)
+//         .attr('class', 'table table-striped table-bordered table-hover table-condensed table-responsive');
+
+//       var thead = d3.select('table')
+//         .append('thead')
+//         .append('tr')
+
+//       var th = thead.selectAll('th')
+//         .data(allTheNames)
+//         .enter()
+//         .append('th')
+//         .text(function(d){ return d });
         
-      var tbody = d3.select('table')
-        .append('tbody');
+//       var tbody = d3.select('table')
+//         .append('tbody');
       
-      var tr = tbody.selectAll('tr')
-        .data(data)
-        .enter()
-        .append('tr');
+//       var tr = tbody.selectAll('tr')
+//         .data(data)
+//         .enter()
+//         .append('tr');
 
-      var td = tr.selectAll('td')
-        .data(function(d){ return d; })
-        .enter()
-        .append('td')
-        .text(function(d){ return d.value; });
-
-
-    break;
+//       var td = tr.selectAll('td')
+//         .data(function(d){ return d; })
+//         .enter()
+//         .append('td')
+//         .text(function(d){ return d.value; });
 
 
+//     break;
+
+
+//   };
+
+  function unique(array) {
+    return $.grep(array, function(el, index) {
+        return index == $.inArray(el, array);
+    });
   };
+
 };
