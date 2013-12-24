@@ -7,45 +7,51 @@ block content
       h1 jonathan<small>.</small>schoonhoven<small>.</small>me
       p A personal website and sandbox for Node + Express + D3
       hr
-
     .row
       #sidebar.col-sm-3
         ul.nav.nav-pills.nav-stacked
-          li(data-value='oneDValue'): a(href='#') 1D Value
-          li(data-value='twoDtimeseries'): a(href='#') 2D time series
-          li(data-value='threeD1colbigtable').active: a(href='#') 3D 1-col big table
-          li(data-value='threeD1colwithlabels'): a(href='#') 3D 1-col labeled
-          li(data-value='threeDmatrixnolabels'): a(href='#') 3D matrix no labels
-          li(data-value='threeDmatrixwithlabels'): a(href='#') 3D matrix with labels
+          li(data-value='zero_dimension').active: a(href='#') 0th Dimension
+          li(data-value='first_dimension'): a(href='#') 1st Dimension
+          li(data-value='second_dimension'): a(href='#') 2nd Dimension
       #content.col-sm-9
         #chartTypes.btn-group.btn-group-sm
           #toJSON.btn.btn-link(data-value='json') JSON
           #toDotMatrix.btn.btn-link(data-value='dotMatrix') Dot Matrix
           #toTable.btn.btn-link.active(data-value='table') Table
+        p#charTitle.lead
+        p#chartDesc Description Goes Here
         #canvas
       hr
   script
 
     var table = !{tableObj};
-    var currentData = 'oneDValue';
+    var tables = [];
+    for(var i=0;i<Object.keys(table).length;i++){ tables.push(Object.keys(table)[i]) };
+    var currentTable = tables[0];
     var currentType = 'table';
 
-    draw(table[currentData].rows, currentType);
+    // set chart title in html
+    $('#charTitle').html(table[currentTable].title);
+    $('#chartDesc').html(table[currentTable].description);
+
+    draw(table[currentTable].rows, currentType);
 
     // new chart type
     $('#chartTypes .btn').click(function(){ 
       currentType = $(this).attr('data-value');
-      draw(table[currentData].rows, currentType);
+      draw(table[currentTable].rows, currentType);
       $('.btn').not(this).removeClass('active'); 
       $(this).addClass('active'); 
     });
 
     // new data set
     $('#sidebar li').click(function(){
-      currentData = $(this).attr('data-value');
-      draw(table[currentData].rows, currentType);
+      currentTable = $(this).attr('data-value');
+      draw(table[currentTable].rows, currentType);
       $('li').not(this).removeClass('active');
       $(this).addClass('active');
+      $('#charTitle').html(table[currentTable].title);
+      $('#chartDesc').html(table[currentTable].description);
       })
     
     // toggle widescreen
