@@ -24,10 +24,8 @@ function draw(data, chartType){
   tableItems.keys.forEach(function(key){
     tableItems[key] = [];
     data.forEach(function(row){
-      var i = 0;
       row.forEach(function(item){
         if(item[key]) { tableItems[key].push(item[key]) };
-        i++; 
       });
     });
     tableItems[key] = unique(tableItems[key].sort());
@@ -77,62 +75,74 @@ function draw(data, chartType){
         .attr('r', 2)
         .style('fill', 'black');
 
-      // var text = group.selectAll('text')
-      //   .data(function(d){ return d; })
-      //   .enter()
-      //   .append("text")
-      //   .attr('x', function(d, i, j){ return scale_x(i); })
-      //   .attr('y', function(d, i, j){ return scale_y(j); })
-      //   .attr("dy", -7)
-      //   .attr("dx", 0)
-      //   .style("text-anchor", "middle")
-      //   .text( function(d){ return d.value; } )
-      //   .style("font", "12px sans-serif")
-      //   .style("fill","#000");
+      var text = group.selectAll('text')
+        .data(function(d){ return d; })
+        .enter()
+        .append("text")
+        .attr('x', function(d, i, j){ return scale_x(i); })
+        .attr('y', function(d, i, j){ return scale_y(j); })
+        .attr("dy", -7)
+        .attr("dx", 0)
+        .style("text-anchor", "middle")
+        .text( function(d){ return d.value; } )
+        .style("font", "10px sans-serif")
+        .style("fill","#333");
 
       break; //dotMatrix
+
+      case 'table':
+
+        var canvas = d3.select('#canvas')
+          .append('table')
+          .attr('width', canvas_x)
+          .attr('height', canvas_y)
+          .attr('class', 'table table-striped table-bordered table-hover table-condensed table-responsive');
+
+        var thead = d3.select('table')
+          .append('thead')
+          .append('tr')
+
+        // if we're going to prepend an extra y-label column, shift header row right
+        if(tableItems.yLabel.length > 0 && tableItems.xLabel.length > 0){ tableItems.xLabel.unshift(''); }
+
+        var th = thead.selectAll('th')
+          .data(tableItems.xLabel)
+          .enter()
+          .append('th')
+          .text(function(d){ return d; });
+
+        var tbody = d3.select('table')
+          .append('tbody');
+        
+        var tr = tbody.selectAll('tr')
+          .data(data)
+          .enter()
+          .append('tr');
+
+        // if we do not have yLabels to prepend, give .data an empty array
+        var td_yData = tableItems.yLabel.length > 0 ? [1] : [];
+
+        // yLabel column
+        var td_y = tr.selectAll('.td_y')
+          .data(td_yData)
+          .enter()
+          .append('td')
+          .attr('class', 'td_y')
+          .text(function(d,i){ return tableItems.yLabel[i]; })
+
+        var td = tr.selectAll('.td')
+          .data(function(d){ return d; })
+          .enter()
+          .append('td')
+          .attr('class', 'td')
+          .text(function(d){ return d.value; });
+
+      break; // table
 
   }; // end switch
 
 
 //   switch(chartType){
-
-
-//     case 'dotMatrix':
-
-//       var canvas = d3.select('#canvas')
-//         .append('svg')
-//         .attr('width', canvas_x)
-//         .attr('height', canvas_y);
-
-//       var group = canvas.selectAll('.group')
-//         .data(data)
-//         .enter()
-//         .append('g')
-//         .attr('class', 'group');
-
-//       var circles = group.selectAll('.myCircle')
-//         .data(function(d){ return d; })
-//         .enter()
-//         .append('circle')
-//         .attr('class', 'myCircle')
-//         .attr('cx', function(d, i, j){ return scale_x(j); })
-//         .attr('cy', function(d, i){ return scale_y(i); })
-//         .attr('r', 2)
-//         .style('fill', 'black');
-
-//       var text = group.selectAll('text')
-//         .data(function(d){ return d; })
-//         .enter()
-//         .append("text")
-//         .attr('x', function(d, i, j){ return scale_x(j); })
-//         .attr('y', function(d, i, j){ return scale_y(i); })
-//         .attr("dy", -7)
-//         .attr("dx", 0)
-//         .style("text-anchor", "middle")
-//         .text( function(d){ return d.value; } )
-//         .style("font", "12px sans-serif")
-//         .style("fill","#000");
 
 
 //       $(window).resize(function(){
@@ -218,21 +228,6 @@ function draw(data, chartType){
 
 //     default: //table
 
-//       var canvas = d3.select('#canvas')
-//         .append('table')
-//         .attr('width', canvas_x)
-//         .attr('height', canvas_y)
-//         .attr('class', 'table table-striped table-bordered table-hover table-condensed table-responsive');
-
-//       var thead = d3.select('table')
-//         .append('thead')
-//         .append('tr')
-
-//       var th = thead.selectAll('th')
-//         .data(allTheNames)
-//         .enter()
-//         .append('th')
-//         .text(function(d){ return d });
         
 //       var tbody = d3.select('table')
 //         .append('tbody');

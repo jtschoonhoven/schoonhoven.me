@@ -11,15 +11,17 @@ block content
     .row
       #sidebar.col-sm-3
         ul.nav.nav-pills.nav-stacked
-          li(data-value='oneDimension'): a(href='#') 1-Dimensional A
-          li(data-value='oneDimensionC'): a(href='#') 1-Dimensional B
-          li(data-value='twoDimension').active: a(href='#') 2-Dimensional
-          li(data-value='threeDimensionB'): a(href='#') 3-Dimensional Data
+          li(data-value='oneDimension'): a(href='#') 1D 1-col
+          li(data-value='oneDimensionC'): a(href='#') 1D 3-col
+          li(data-value='twoDimension').active: a(href='#') 2D 1-col
+          li(data-value='threeDimensionB'): a(href='#') 3D 1-col
+          li(data-value='twoDimensionC'): a(href='#') 3D 3-col
+          li(data-value='threeDimensionD'): a(href='#') 3D 3-col
       #content.col-sm-9
         #chartTypes.btn-group.btn-group-sm
           #toJSON.btn.btn-link(data-value='json') JSON
-          #toDotMatrix.btn.btn-link.active(data-value='dotMatrix') Dot Matrix
-          #toTable.btn.btn-link(data-value='table') Table
+          #toDotMatrix.btn.btn-link(data-value='dotMatrix') Dot Matrix
+          #toTable.btn.btn-link.active(data-value='table') Table
           #toBoxAndWhisker.btn.btn-link(data-value='boxAndWhisker') Quartiles
         #canvas
       hr
@@ -27,7 +29,7 @@ block content
 
     var table = !{tableObj};
     var currentData = 'twoDimension';
-    var currentType = 'dotMatrix';
+    var currentType = 'table';
 
     draw(table[currentData].rows, currentType);
 
