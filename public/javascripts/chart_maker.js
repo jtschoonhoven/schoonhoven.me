@@ -25,10 +25,13 @@ function draw(data, chartType){
     tableItems[key] = [];
     data.forEach(function(row){
       row.forEach(function(item){
-        if(item[key]) { tableItems[key].push(item[key]) };
+        if(item[key]){ item[key] = parseInt(item[key]) == item[key] ? parseInt(item[key]) : item[key] }
+        if(item[key]){ tableItems[key].push(item[key]) };
       });
     });
-    tableItems[key] = unique(tableItems[key].sort());
+    tableItems[key] = tableItems[key].sort(function(a,b){ return a - b; });
+    tableItems[key] = unique(tableItems[key]);
+    console.log(tableItems[key])
   });
 
     console.log(tableItems);
@@ -94,8 +97,8 @@ function draw(data, chartType){
 
         var canvas = d3.select('#canvas')
           .append('table')
-          .attr('width', canvas_x)
-          .attr('height', canvas_y)
+          // .attr('width', canvas_x)
+          // .attr('height', canvas_y)
           .attr('class', 'table table-striped table-bordered table-hover table-condensed table-responsive');
 
         var thead = d3.select('table')
@@ -119,23 +122,19 @@ function draw(data, chartType){
           .enter()
           .append('tr');
 
-        // if we do not have yLabels to prepend, give .data an empty array
-        var td_yData = tableItems.yLabel.length > 0 ? [1] : [];
-
-        // yLabel column
-        var td_y = tr.selectAll('.td_y')
-          .data(td_yData)
-          .enter()
-          .append('td')
-          .attr('class', 'td_y')
-          .text(function(d,i){ return tableItems.yLabel[i]; })
-
         var td = tr.selectAll('.td')
           .data(function(d){ return d; })
           .enter()
           .append('td')
           .attr('class', 'td')
           .text(function(d){ return d.value; });
+
+        var ycol = tr.selectAll('.ycol')
+          .data(tableItems.yLabel.length == 0 ? [] : [1])
+          .enter()
+          .insert('td', 'td')
+          .attr('class', 'ycol')
+          .text(function(d,i,j){ return tableItems.yLabel[j]; })
 
       break; // table
 
