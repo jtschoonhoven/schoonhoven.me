@@ -1,29 +1,49 @@
-      {
-    "zero_dimension": {
-      "title": "The Universe in the 0th Dimension",
-      "description": "In the 0th dimension data may have a name and value, but it exists in a vacuum.",
-      "rows": [[
-        {"name": "The Speed of Light in a Vacuum (m/s)", "value": 299792458}
-        ]]
-    },
-    "first_dimension": {
-      "title": "The Universe in the 1st Dimension",
-      "description": "In the 1st dimension data can be linear: it can travel in space or in time.",
-      "rows": [
-        [{"name": "Distance Travelled by Light (m)", "value":0, "xLabel":"At 0 Seconds"},
-        {"name": "Distance Travelled by Light (m)", "value":299792458, "xLabel": "After 1 Second"},
-        {"name": "Distance Travelled by Light (m)", "value":599584916, "xLabel": "After 2 Seconds"}]
-      ]
-    },
-    "second_dimension": {
-      "title": "The Universe in the 2nd Dimension",
-      "description": "In the 2nd dimension, we can see how multiple properties change at the same time",
-      "rows": [
-        [{"name": "Distance Travelled by Light in a Vacuum (m)", "value":0, "xLabel":"At 0 Seconds"},
-        {"name": "Distance Travelled by Light in a Vacuum (m)", "value":299792458, "xLabel": "After 1 Second"},
-        {"name": "Distance Travelled by Light in a Vacuum (m)", "value":599584916, "xLabel": "After 2 Seconds"}],
-        [{"name": "Distance Travelled by Light in the Atmosphere (m)", "value":0, "xLabel":"At 0 Seconds"},
-        {"name": "Distance Travelled by Light in the Atmosphere (m)", "value":299705000, "xLabel": "After 1 Second"},
-        {"name": "Distance Travelled by Light in the Atmosphere (m)", "value":599410000, "xLabel": "After 2 Seconds"}]
-      ]
-    }
+  {
+  "zero_dimension": {
+    "title": "Distance Travelled by Light",
+    "description": "Zero-dimensional data has no x or y axis. It exists. Nothing more.",
+    "rows": [[
+      {"name": "Distance", "value": 299792458}
+      ]]
+  },
+  "first_dimension": {
+    "title": "Distance Travelled by Light",
+    "description": "One-dimensional data has an axis. It can move in a line through space, time, or different categories. Exciting!",
+    "rows": [
+      [{"name": "Distance", "value":0, "xLabel":"At 0 Seconds"},
+      {"name": "Distance", "value":299792458, "xLabel": "After 1 Second"},
+      {"name": "Distance", "value":599584916, "xLabel": "After 2 Seconds"}]
+    ]
+  },
+  "second_dimension": {
+    "title": "Distance Travelled by Light",
+    "description": "Two-dimensional data is more dynamic. It can travel along TWO axes. View different categories over time, for instance.",
+    "rows": [
+      [{"name": "Distance", "value":0, "xLabel":"At 0 Seconds", "yLabel": "In a Vacuum"},
+      {"name": "Distance", "value":299792458, "xLabel": "After 1 Second", "yLabel": "In a Vacuum"},
+      {"name": "Distance", "value":599584916, "xLabel": "After 2 Seconds", "yLabel": "In a Vacuum"}],
+      [{"name": "Distance", "value":0, "xLabel":"At 0 Seconds", "yLabel": "In the Atmosphere"},
+      {"name": "Distance", "value":299705000, "xLabel": "After 1 Second", "yLabel": "In the Atmosphere"},
+      {"name": "Distance", "value":599410000, "xLabel": "After 2 Seconds", "yLabel": "In the Atmosphere"}]
+    ]
+  },
+  "third_dimension": {
+    "title": "Distance Travelled by Light",
+    "description": "Three dimensional data has an x, y, and z-axis. A three dimensional table can show multiple categories moving in space and time together. Representing the third dimension on a 2-dimensional computer screen can be accomplished in a few ways.",
+    "rows": [
+      [{"name": "Distance", "value":0, "xLabel":"At 0 Seconds", "yLabel": "In a Vacuum", "zLabel": "m/s"},
+      {"name": "Distance", "value":299792458, "xLabel": "After 1 Second", "yLabel": "In a Vacuum", "zLabel": "m/s"},
+      {"name": "Distance", "value":599584916, "xLabel": "After 2 Seconds", "yLabel": "In a Vacuum", "zLabel": "m/s"}],
+      [{"name": "Distance", "value":0, "xLabel":"At 0 Seconds", "yLabel": "In the Atmosphere", "zLabel": "m/s"},
+      {"name": "Distance", "value":299705000, "xLabel": "After 1 Second", "yLabel": "In the Atmosphere", "zLabel": "m/s"},
+      {"name": "Distance", "value":599410000, "xLabel": "After 2 Seconds", "yLabel": "In the Atmosphere", "zLabel": "m/s"}],
+      // z
+      [{"name": "Distance", "value":0, "xLabel":"At 0 Seconds", "yLabel": "In a Vacuum", "zLabel": "k/s"},
+      {"name": "Distance", "value":299792, "xLabel": "After 1 Second", "yLabel": "In a Vacuum", "zLabel": "k/s"},
+      {"name": "Distance", "value":599584, "xLabel": "After 2 Seconds", "yLabel": "In a Vacuum", "zLabel": "k/s"}],
+      [{"name": "Distance", "value":0, "xLabel":"At 0 Seconds", "yLabel": "In the Atmosphere", "zLabel": "k/s"},
+      {"name": "Distance", "value":299705, "xLabel": "After 1 Second", "yLabel": "In the Atmosphere", "zLabel": "k/s"},
+      {"name": "Distance", "value":599410, "xLabel": "After 2 Seconds", "yLabel": "In the Atmosphere", "zLabel": "k/s"}]
+    ]
+  }
+} 

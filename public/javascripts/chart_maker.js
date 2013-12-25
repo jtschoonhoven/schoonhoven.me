@@ -1,40 +1,53 @@
 
-// expects data like so:
-
-// [[{"name":"users","value":"295355","yLabel":"US"},{"name":"users","value":"295355","yLabel":"CA"}],
-// [{"name":"users","value":"347468","yLabel":"US"},{"name":"users","value":"347468","yLabel":"CA"}]]
-
-// {"title":"matrix", "rows": [[{"name":"n","value":1},{"name":"n","value":2},{"name":"n","value":3}],
-// [{"name":"n","value":4},{"name":"n","value":5},{"name":"n","value":6}],
-// [{"name":"n","value":7},{"name":"n","value":8},{"name":"n","value":9}]]}
 
 function draw(data, chartType){
 
   $('#canvas').empty();
 
+  // declare axes + values
+  var values   = [];
+  var xLabels  = [];
+  var yLabels  = [];
+  var zLabels  = [];
+  var zxLabels = [];
+  var zyLabels = [];
+  var zzLabels = [];
+
+  // fill values
+  for(var i=0; i<data.length; i++){
+    values[i] = [];
+    for(var j=0; j<data[i].length; j++){
+      values[i].push(data[i][j].value);
+    };
+  };
+  // fill xLabels
+  for(var i=0; i<data[0].length; i++){ 
+    if(data[0][i].xLabel){ xLabels.push(data[0][i].xLabel) };
+  };
+  // fill yLabels
+  for(var i=0; i<data.length; i++){
+    if(data[i][0].yLabel){ yLabels.push(data[i][0].yLabel) };
+  };
+  // fill zLabels
+  for(var i=0; i<data.length; i++){
+    if(data[i][0].zLabel){ zLabels.push([data[i][0].zLabel]) };
+  };
+  // fill zxLabels
+  for(var i=0; i<data.length; i++){
+    if(data[i][0].zxLabel){ zxLabels.push([data[i][0].zxLabel]) };
+  };
+  // fill zyLabels
+  for(var i=0; i<data.length; i++){
+    if(data[i][0].zyLabel){ zyLabels.push([data[i][0].zyLabel]) };
+  };
+  // fill zzLabels
+  for(var i=0; i<data.length; i++){
+    if(data[i][0].zzLabel){ zzLabels.push([data[i][0].zzLabel]) };
+  };
+
   var canvas_x = $('#canvas').width();
-  var canvas_y = $(window).height() - 120;
-  var margin = 50;
-
-  // make object: all keys/values from the data object, sorted & unique
-  var tableItems = {};
-  tableItems.xLabel = [];
-  tableItems.yLabel = [];
-  tableItems.keys = Object.keys(data[0][0]);
-  tableItems.keys.forEach(function(key){
-    tableItems[key] = [];
-    data.forEach(function(row){
-      row.forEach(function(item){
-        if(item[key]){ item[key] = parseInt(item[key]) == item[key] ? parseInt(item[key]) : item[key] }
-        if(item[key]){ tableItems[key].push(item[key]) };
-      });
-    });
-    tableItems[key] = tableItems[key].sort(function(a,b){ return a - b; });
-    tableItems[key] = unique(tableItems[key]);
-    console.log(tableItems[key])
-  });
-
-    console.log(tableItems);
+  var canvas_y = $(window).height() - 140;
+  var margin = 60;
 
   var scale_x = d3.scale.linear()
     .domain([0, data[0].length - 1])
@@ -95,21 +108,36 @@ function draw(data, chartType){
 
       case 'table':
 
+        // add back y & z labels as values to be printed
+        for(var i=0; i<values.length; i++){
+          if(zzLabels[i]){ values[i].unshift(zzLabels[i]); };
+          if(zzLabels[i]){ values[i].unshift(zzLabels[i]); };
+          if(zyLabels[i]){ values[i].unshift(zyLabels[i]); };
+          if(zxLabels[i]){ values[i].unshift(zxLabels[i]); };
+          if(zLabels[i]) { values[i].unshift(zLabels[i]) ; };
+          if(yLabels[i]) { values[i].unshift(yLabels[i]) ; };
+        };
+
+        // add back x labels as value headers to be printed
+        if(xLabels.length > 0){
+          var header = [];
+          for(var i=values[0].length - 1; i>=0; i--){
+            header.unshift(xLabels.pop());
+          };
+          values.unshift(header);
+        };
+        console.log(values);
+
         var canvas = d3.select('#canvas')
           .append('table')
-          // .attr('width', canvas_x)
-          // .attr('height', canvas_y)
           .attr('class', 'table table-striped table-bordered table-hover table-condensed table-responsive');
 
         var thead = d3.select('table')
           .append('thead')
           .append('tr')
 
-        // if we're going to prepend an extra y-label column, shift header row right
-        if(tableItems.yLabel.length > 0 && tableItems.xLabel.length > 0){ tableItems.xLabel.unshift(''); }
-
         var th = thead.selectAll('th')
-          .data(tableItems.xLabel)
+          .data(values.shift())
           .enter()
           .append('th')
           .text(function(d){ return d; });
@@ -118,7 +146,7 @@ function draw(data, chartType){
           .append('tbody');
         
         var tr = tbody.selectAll('tr')
-          .data(data)
+          .data(values)
           .enter()
           .append('tr');
 
@@ -127,14 +155,7 @@ function draw(data, chartType){
           .enter()
           .append('td')
           .attr('class', 'td')
-          .text(function(d){ return d.value; });
-
-        var ycol = tr.selectAll('.ycol')
-          .data(tableItems.yLabel.length == 0 ? [] : [1])
-          .enter()
-          .insert('td', 'td')
-          .attr('class', 'ycol')
-          .text(function(d,i,j){ return tableItems.yLabel[j]; })
+          .text(function(d){ return d; });
 
       break; // table
 
