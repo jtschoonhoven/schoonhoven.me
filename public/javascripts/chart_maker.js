@@ -116,7 +116,7 @@ function draw(data, chartType){
             var d = {};
             d.name =  'yLabel';
             d.value = yLabels[i];
-            d.yLabel = i + 1;
+            d.yLabel = yLabels[i];
             d.xLabel = 'y-axis';
             data[i].unshift(d);
           };
@@ -126,7 +126,7 @@ function draw(data, chartType){
             var d = {};
             d.name =  'zLabel';
             d.value = zLabels[i];
-            d.yLabel = i + 1;
+            d.yLabel = zLabels[i];
             d.xLabel = 'z-axis';
             data[i].unshift(d);
           };
@@ -136,7 +136,7 @@ function draw(data, chartType){
             var d = {};
             d.name =  'zxLabel';
             d.value = zxLabels[i];
-            d.yLabel = i + 1;
+            d.yLabel = zxLabels[i];
             d.xLabel = 'zx-axis';
             data[i].unshift(d);
           };
@@ -146,7 +146,7 @@ function draw(data, chartType){
             var d = {};
             d.name =  'zyLabel';
             d.value = zyLabels[i];
-            d.yLabel = i + 1;
+            d.yLabel = zyLabels[i];
             d.xLabel = 'zy-axis';
             data[i].unshift(d);
           };
@@ -156,7 +156,7 @@ function draw(data, chartType){
             var d = {};
             d.name =  'zzLabel';
             d.value = zzLabels[i];
-            d.yLabel = i + 1;
+            d.yLabel = zzLabels[i];
             d.xLabel = 'zz-axis';
             data[i].unshift(d);
           };
@@ -168,13 +168,14 @@ function draw(data, chartType){
             d.name = 'xLabel';
             d.value = data[0][i].xLabel
             d.yLabel = 'x-axis';
-            d.xLabel = i;
+            d.xLabel = data[0][i].xLabel;
             header.push(d);
           };
           data.unshift(header);
         };
         console.log(data);
 
+        // draw table
         var canvas = d3.select('#canvas')
           .append('table')
           .attr('class', 'table table-striped table-bordered table-hover table-condensed table-responsive');
@@ -197,11 +198,15 @@ function draw(data, chartType){
           .enter()
           .append('tr');
 
-        var td = tr.selectAll('.td')
+        var td = tr.selectAll('td')
           .data(function(d){ return d; })
           .enter()
           .append('td')
-          .attr('class', 'td')
+          .attr('data-name', function(d){ return d.name; })
+          .attr('data-row', function(d){ return d.yLabel; })
+          .attr('data-col', function(d){ return d.xLabel; })
+          .attr('data-x-co', function(d,i,j){ return j; })
+          .attr('data-y-co', function(d,i){ return i; })
           .text(function(d){ return d.value; });
 
       break; // table
