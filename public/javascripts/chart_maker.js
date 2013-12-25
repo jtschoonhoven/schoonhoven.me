@@ -173,7 +173,6 @@ function draw(data, chartType){
           };
           data.unshift(header);
         };
-        console.log(data);
 
         // draw table
         var canvas = d3.select('#canvas')
@@ -188,6 +187,12 @@ function draw(data, chartType){
           .data(data.shift())
           .enter()
           .append('th')
+          .attr()
+          .attr('data-name', function(d){ return d.name; })
+          .attr('data-row', function(d){ return 'header'; })
+          .attr('data-col', function(d){ return d.xLabel; })
+          .attr('data-x-co', function(d,i,j){ return j; })
+          .attr('data-y-co', function(d,i){ return i; })
           .text(function(d){ return d.value; });
 
         var tbody = d3.select('table')
