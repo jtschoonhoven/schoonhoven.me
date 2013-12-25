@@ -2,6 +2,8 @@
 
 function draw(data, chartType){
 
+  // clear the canvas and break the reference to the parent object
+  var data = JSON.parse(JSON.stringify(data));
   $('#canvas').empty();
 
   // declare axes + values
@@ -108,25 +110,70 @@ function draw(data, chartType){
 
       case 'table':
 
-        // add back y & z labels as values to be printed
-        for(var i=0; i<values.length; i++){
-          if(zzLabels[i]){ values[i].unshift(zzLabels[i]); };
-          if(zzLabels[i]){ values[i].unshift(zzLabels[i]); };
-          if(zyLabels[i]){ values[i].unshift(zyLabels[i]); };
-          if(zxLabels[i]){ values[i].unshift(zxLabels[i]); };
-          if(zLabels[i]) { values[i].unshift(zLabels[i]) ; };
-          if(yLabels[i]) { values[i].unshift(yLabels[i]) ; };
+        // add back y & z labels as values in data obj
+        if(yLabels.length > 0){
+          for(var i=0; i<data.length; i++){
+            var d = {};
+            d.name =  'yLabel';
+            d.value = yLabels[i];
+            d.yLabel = i + 1;
+            d.xLabel = 'y-axis';
+            data[i].unshift(d);
+          };
         };
-
-        // add back x labels as value headers to be printed
+        if(zLabels.length > 0){
+          for(var i=0; i<data.length; i++){
+            var d = {};
+            d.name =  'zLabel';
+            d.value = zLabels[i];
+            d.yLabel = i + 1;
+            d.xLabel = 'z-axis';
+            data[i].unshift(d);
+          };
+        };
+        if(zxLabels.length > 0){
+          for(var i=0; i<data.length; i++){
+            var d = {};
+            d.name =  'zxLabel';
+            d.value = zxLabels[i];
+            d.yLabel = i + 1;
+            d.xLabel = 'zx-axis';
+            data[i].unshift(d);
+          };
+        };
+        if(zyLabels.length > 0){
+          for(var i=0; i<data.length; i++){
+            var d = {};
+            d.name =  'zyLabel';
+            d.value = zyLabels[i];
+            d.yLabel = i + 1;
+            d.xLabel = 'zy-axis';
+            data[i].unshift(d);
+          };
+        };
+        if(zzLabels.length > 0){
+          for(var i=0; i<data.length; i++){
+            var d = {};
+            d.name =  'zzLabel';
+            d.value = zzLabels[i];
+            d.yLabel = i + 1;
+            d.xLabel = 'zz-axis';
+            data[i].unshift(d);
+          };
+        };
         if(xLabels.length > 0){
           var header = [];
-          for(var i=values[0].length - 1; i>=0; i--){
-            header.unshift(xLabels.pop());
+          for(var i=0; i<data[0].length; i++){
+            var d = {};
+            d.name = 'xLabel';
+            d.value = data[0][i].xLabel
+            d.yLabel = 'x-axis';
+            d.xLabel = i;
+            header.push(d);
           };
-          values.unshift(header);
+          data.unshift(header);
         };
-        console.log(values);
+        console.log(data);
 
         var canvas = d3.select('#canvas')
           .append('table')
@@ -137,16 +184,16 @@ function draw(data, chartType){
           .append('tr')
 
         var th = thead.selectAll('th')
-          .data(values.shift())
+          .data(data.shift())
           .enter()
           .append('th')
-          .text(function(d){ return d; });
+          .text(function(d){ return d.value; });
 
         var tbody = d3.select('table')
           .append('tbody');
         
         var tr = tbody.selectAll('tr')
-          .data(values)
+          .data(data)
           .enter()
           .append('tr');
 
@@ -155,7 +202,7 @@ function draw(data, chartType){
           .enter()
           .append('td')
           .attr('class', 'td')
-          .text(function(d){ return d; });
+          .text(function(d){ return d.value; });
 
       break; // table
 
