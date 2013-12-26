@@ -59,7 +59,6 @@ function draw(data, chartType){
     .domain([d3.max(d3.max(values)), 0])
     .range([margin, canvas_y - margin]);
 
-console.log(d3.max(d3.max(values)));  
   switch(chartType){
 
     case 'json':
@@ -69,44 +68,6 @@ console.log(d3.max(d3.max(values)));
         .text(JSON.stringify(data, null, '\t'));
 
     break; //json
-
-    case 'dotMatrix':
-
-      var canvas = d3.select('#canvas')
-        .append('svg')
-        .attr('width', canvas_x)
-        .attr('height', canvas_y);
-
-      var group = canvas.selectAll('.group')
-        .data(data)
-        .enter()
-        .append('g')
-        .attr('class', 'group');
-
-      var circles = group.selectAll('.myCircle')
-        .data(function(d){ return d; })
-        .enter()
-        .append('circle')
-        .attr('class', 'myCircle')
-        .attr('cx', function(d, i, j){ return scale_x(i); })
-        .attr('cy', function(d, i, j){ return scale_y(j); })
-        .attr('r', 2)
-        .style('fill', 'black');
-
-      var text = group.selectAll('text')
-        .data(function(d){ return d; })
-        .enter()
-        .append("text")
-        .attr('x', function(d, i, j){ return scale_x(i); })
-        .attr('y', function(d, i, j){ return scale_y(j); })
-        .attr("dy", -7)
-        .attr("dx", 0)
-        .style("text-anchor", "middle")
-        .text( function(d){ return d.value; } )
-        .style("font", "10px sans-serif")
-        .style("fill","#333");
-
-      break; //dotMatrix
 
       case 'table':
 
@@ -231,6 +192,19 @@ console.log(d3.max(d3.max(values)));
         .append('g')
         .attr('class', 'group');
 
+      var newPath = d3.svg.line()
+        .x(function(d,i){ return scale_x(i); })
+        .y(function(d){ return scale_y(d.value); })
+        .interpolate('cardinal');
+
+      var path = group.selectAll('path')
+        .data(data)
+        .enter()
+        .append('path')
+        .attr('d', newPath)
+        .attr('stroke', '#BBB')
+        .attr('stroke-width', 1);
+
       var circles = group.selectAll('circle')
         .data(function(d){ return d; })
         .enter()
@@ -251,19 +225,7 @@ console.log(d3.max(d3.max(values)));
         .style('fill', '#666')
         .style("text-anchor", "middle")
         .style("font", "10px sans-serif")
-        .text(function(d){ return d.value; })
-
-      var lineFunction = d3.svg.line()
-        .x('x', function(d,i,j){ return scale_x(j); })
-        .y('y', function(d){ return scale_y(d.value); })
-        .interpolate('cardinal');
-
-    var line = canvas.append("path")
-        .attr("class", "line")
-        .attr("d", lineFunction(data))
-        .attr("stroke", "#44b1bb")
-        .attr("stroke-width", 2)
-        .attr("fill", "none");
+        .text(function(d){ return d.value; });
 
       break;
 

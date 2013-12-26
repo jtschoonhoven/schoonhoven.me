@@ -23,7 +23,6 @@ block content
       #content.col-sm-9
         #chartTypes.btn-group.btn-group-sm
           #toJSON.btn.btn-link(data-value='json') JSON
-          #toDotMatrix.btn.btn-link(data-value='dotMatrix') Dot Matrix
           #toTable.btn.btn-link(data-value='table') Table
           #toLine.btn.btn-link.active(data-value='line') Line
         p#charTitle.lead
@@ -51,7 +50,6 @@ block content
       draw(table[currentTable].rows, currentType);
       $('.btn').not(this).removeClass('active'); 
       $(this).addClass('active'); 
-      getAxes();
     });
 
     // new data set
@@ -62,7 +60,6 @@ block content
       $(this).addClass('active');
       $('#charTitle').html(table[currentTable].title);
       $('#chartDesc').html(table[currentTable].description);
-      getAxes();
       });
     
     // toggle widescreen
