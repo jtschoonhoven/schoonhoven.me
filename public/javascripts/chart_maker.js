@@ -56,9 +56,10 @@ function draw(data, chartType){
     .range([margin, canvas_x - margin]);
 
   var scale_y = d3.scale.linear()
-    .domain([0, data.length - 1])
+    .domain([d3.max(d3.max(values)), 0])
     .range([margin, canvas_y - margin]);
 
+console.log(d3.max(d3.max(values)));  
   switch(chartType){
 
     case 'json':
@@ -80,8 +81,7 @@ function draw(data, chartType){
         .data(data)
         .enter()
         .append('g')
-        .attr('class', 'group')
-        //.attr('transform', function(d,i){ return 'translate(' + scale_x(i) + ',0)'; });
+        .attr('class', 'group');
 
       var circles = group.selectAll('.myCircle')
         .data(function(d){ return d; })
@@ -218,10 +218,59 @@ function draw(data, chartType){
 
       break; // table
 
+      case 'line':
+
+      var canvas = d3.select('#canvas')
+        .append('svg')
+        .attr('width', canvas_x)
+        .attr('height', canvas_y);
+
+      var group = canvas.selectAll('.group')
+        .data(data)
+        .enter()
+        .append('g')
+        .attr('class', 'group');
+
+      var circles = group.selectAll('circle')
+        .data(function(d){ return d; })
+        .enter()
+        .append('circle')
+        .attr('cx', function(d,i,j){ return scale_x(i); })
+        .attr('cy', function(d){ return scale_y(d.value); })
+        .attr('r', 3)
+        .style('fill', 'black');
+
+      var text = group.selectAll('text')
+        .data(function(d){ return d; })
+        .enter()
+        .append('text')
+        .attr('x', function(d,i,j){ return scale_x(i); })
+        .attr('y', function(d){ return scale_y(d.value); })
+        .attr("dy", -7)
+        .attr("dx", 0)
+        .style('fill', '#666')
+        .style("text-anchor", "middle")
+        .style("font", "10px sans-serif")
+        .text(function(d){ return d.value; })
+
+      var lineFunction = d3.svg.line()
+        .x('x', function(d,i,j){ return scale_x(j); })
+        .y('y', function(d){ return scale_y(d.value); })
+        .interpolate('cardinal');
+
+    var line = canvas.append("path")
+        .attr("class", "line")
+        .attr("d", lineFunction(data))
+        .attr("stroke", "#44b1bb")
+        .attr("stroke-width", 2)
+        .attr("fill", "none");
+
+      break;
+
   }; // end switch
 
 
-//   switch(chartType){
+
 
 
 //       $(window).resize(function(){

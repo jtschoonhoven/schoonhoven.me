@@ -16,15 +16,16 @@ block content
     .row
       #sidebar.col-sm-3
         ul.nav.nav-pills.nav-stacked
-          li(data-value='zero_dimension').active: a(href='#') 0th Dimension
+          li(data-value='zero_dimension'): a(href='#') 0th Dimension
           li(data-value='first_dimension'): a(href='#') 1st Dimension
-          li(data-value='second_dimension'): a(href='#') 2nd Dimension
+          li.active(data-value='second_dimension'): a(href='#') 2nd Dimension
           li(data-value='third_dimension'): a(href='#') 3rd Dimension
       #content.col-sm-9
         #chartTypes.btn-group.btn-group-sm
           #toJSON.btn.btn-link(data-value='json') JSON
           #toDotMatrix.btn.btn-link(data-value='dotMatrix') Dot Matrix
-          #toTable.btn.btn-link.active(data-value='table') Table
+          #toTable.btn.btn-link(data-value='table') Table
+          #toLine.btn.btn-link.active(data-value='line') Line
         p#charTitle.lead
         p#chartDesc Description Goes Here
         #canvas
@@ -34,8 +35,8 @@ block content
     var table = !{tableObj};
     var tables = [];
     for(var i=0;i<Object.keys(table).length;i++){ tables.push(Object.keys(table)[i]) };
-    var currentTable = tables[0];
-    var currentType = 'table';
+    var currentTable = tables[2];
+    var currentType = 'line';
 
     // set chart title in html
     $('#charTitle').html(table[currentTable].title);
