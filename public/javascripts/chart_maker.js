@@ -48,15 +48,17 @@ function draw(data, chartType){
   };
 
   var canvas_x = $('#canvas').width();
-  var canvas_y = $(window).height() - 140;
-  var margin = 60;
+  var canvas_y = $(window).height() - 250;
+  var margin = 80;
+  var max = d3.max(d3.max(values));
+  var min = d3.min(d3.min(values));
 
   var scale_x = d3.scale.linear()
     .domain([0, data[0].length - 1])
     .range([margin, canvas_x - margin]);
 
   var scale_y = d3.scale.linear()
-    .domain([d3.max(d3.max(values)), 0])
+    .domain([max, 0])
     .range([margin, canvas_y - margin]);
 
   switch(chartType){
@@ -192,7 +194,7 @@ function draw(data, chartType){
         .append('g')
         .attr('class', 'group');
 
-      var newPath = d3.svg.line()
+      var pathGen = d3.svg.line()
         .x(function(d,i){ return scale_x(i); })
         .y(function(d){ return scale_y(d.value); })
         .interpolate('cardinal');
@@ -201,7 +203,7 @@ function draw(data, chartType){
         .data(data)
         .enter()
         .append('path')
-        .attr('d', newPath)
+        .attr('d', pathGen)
         .attr('stroke', '#BBB')
         .attr('stroke-width', 1);
 
@@ -211,30 +213,49 @@ function draw(data, chartType){
         .append('circle')
         .attr('cx', function(d,i,j){ return scale_x(i); })
         .attr('cy', function(d){ return scale_y(d.value); })
-        .attr('r', 3)
+        .attr('r', 2)
         .style('fill', 'black');
 
-      var text = group.selectAll('text')
-        .data(function(d){ return d; })
-        .enter()
-        .append('text')
-        .attr('x', function(d,i,j){ return scale_x(i); })
-        .attr('y', function(d){ return scale_y(d.value); })
-        .attr("dy", -7)
-        .attr("dx", 0)
-        .style('fill', '#666')
-        .style("text-anchor", "middle")
-        .style("font", "10px sans-serif")
-        .text(function(d){ return d.value; });
+      var xAxisGen = d3.svg.axis()
+        .scale(scale_x)
+        .orient('bottom')
+        .ticks(data[0].length - 1)
+        .tickFormat(d3.format('1')); // integers, or '.1%' // for %'s'
+
+      var xAxis = canvas.append('g')
+      .attr('transform', 'translate(0,' + (canvas_y - margin) + ')')
+        .attr('class', 'x axis')
+        .call(xAxisGen);
+
+      var yAxisGen = d3.svg.axis()
+        .scale(scale_y)
+        .orient('left')
+        .ticks(4);
+
+      var yAxis = canvas.append('g')
+        .attr('class', 'y axis')
+        .attr('transform', 'translate('+ (margin) + ', 0)')
+        .call(yAxisGen);
+
+      // var yAxisGen = d3.svg.axis()
+      //   .scale(scale_y)
+      //   .orient('left');
+
+      // var yAxis = canvas.append('g')
+      //   .attr('class', 'yAxis')
+      //   .call(yAxisGen)
+      //   .append('text')
+      //   .attr('transform', 'rotate(-90)')
+      //   .attr('y', 6)
+      //   .attr('dy', '1em')
+      //   .style('text-anchor', 'end')
+      //   .text('axisss')
 
       break;
 
+
+
   }; // end switch
-
-
-
-
-
 //       $(window).resize(function(){
 
 //         canvas_x = $('#content').width();
@@ -315,29 +336,6 @@ function draw(data, chartType){
 
 //     break;
 
-
-//     default: //table
-
-        
-//       var tbody = d3.select('table')
-//         .append('tbody');
-      
-//       var tr = tbody.selectAll('tr')
-//         .data(data)
-//         .enter()
-//         .append('tr');
-
-//       var td = tr.selectAll('td')
-//         .data(function(d){ return d; })
-//         .enter()
-//         .append('td')
-//         .text(function(d){ return d.value; });
-
-
-//     break;
-
-
-//   };
 
 };
 

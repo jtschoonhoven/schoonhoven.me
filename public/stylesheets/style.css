@@ -13,3 +13,21 @@ li {
 #canvas {
   overflow: scroll;
 }
+
+/* line chart styles */
+.axis path{
+  fill: none;
+  stroke: none;
+}
+
+.axis line {
+  fill: none;
+  stroke: none;
+  shape-renderings: crispEdges;
+}
+
+.axis text {
+  font-family: sans-serif;
+  color: #333;
+  font-size: 11px;
+}
