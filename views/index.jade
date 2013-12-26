@@ -3,17 +3,11 @@ extends layout
 block content
   .container
     #expand.btn.btn-link.pull-right Toggle Sidebar
-    #filter.dropdown.btn.btn-link.pull-right
-      a#drop(role='button' data-toggle='dropdown' href='#') Filter
+    #filter.dropdown.pull-right
+      .btn.btn-link(data-toggle='dropdown') Dropdown &nbsp;
         b.caret
-      ul.dropdown-menu(role='menu' aria-labelledby='drop')
-        li(role='presentation') Group1
-          a(role='menuitem' tabindex='-1' href='#') Item1
-          a(role='menuitem' tabindex='-1' href='#') Item2
-        li.divider(role='presentation')
-        li(role='presentation') Group2
-          a(role='menuitem' tabindex='-1' href='#') Item1
-          a(role='menuitem' tabindex='-1' href='#') Item2
+      ul.dropdown-menu
+        li: a(tabindex='-1' href='#') Item1
 
     .row
       h1 jonathan<small>.</small>schoonhoven<small>.</small>me
@@ -49,8 +43,6 @@ block content
 
     draw(table[currentTable].rows, currentType);
 
-    // filter button
-    $('.dropdown-toggle').dropdown()
 
     // new chart type
     $('#chartTypes .btn').click(function(){ 
@@ -58,6 +50,7 @@ block content
       draw(table[currentTable].rows, currentType);
       $('.btn').not(this).removeClass('active'); 
       $(this).addClass('active'); 
+      getAxes();
     });
 
     // new data set
@@ -68,7 +61,8 @@ block content
       $(this).addClass('active');
       $('#charTitle').html(table[currentTable].title);
       $('#chartDesc').html(table[currentTable].description);
-      })
+      getAxes();
+      });
     
     // toggle widescreen
     $('#expand').click(function(){ 

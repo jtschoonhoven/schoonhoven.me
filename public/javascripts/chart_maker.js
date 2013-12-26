@@ -165,9 +165,9 @@ function draw(data, chartType){
           var header = [];
           for(var i=0; i<data[0].length; i++){
             var d = {};
-            d.name = 'xLabel';
+            d.name = data[0][i].name;
             d.value = data[0][i].xLabel
-            d.yLabel = 'x-axis';
+            d.yLabel = data[0][i].name;
             d.xLabel = data[0][i].xLabel;
             header.push(d);
           };
@@ -188,11 +188,12 @@ function draw(data, chartType){
           .enter()
           .append('th')
           .attr()
-          .attr('data-name', function(d){ return d.name; })
-          .attr('data-row', function(d){ return 'header'; })
-          .attr('data-col', function(d){ return d.xLabel; })
-          .attr('data-x-co', function(d,i,j){ return j; })
-          .attr('data-y-co', function(d,i){ return i; })
+          .attr('data-value', function(d)    { return d.value; })
+          .attr('data-name',  function(d)    { return d.name; })
+          .attr('data-row',   function(d)    { return 'header'; })
+          .attr('data-col',   function(d)    { return d.xLabel; })
+          .attr('data-x-co',  function(d,i,j){ return j; })
+          .attr('data-y-co',  function(d,i)  { return i; })
           .text(function(d){ return d.value; });
 
         var tbody = d3.select('table')
@@ -207,11 +208,12 @@ function draw(data, chartType){
           .data(function(d){ return d; })
           .enter()
           .append('td')
-          .attr('data-name', function(d){ return d.name; })
-          .attr('data-row', function(d){ return d.yLabel; })
-          .attr('data-col', function(d){ return d.xLabel; })
+          .attr('data-value',function(d)    { return d.value; })
+          .attr('data-name', function(d)    { return d.name; })
+          .attr('data-row',  function(d)    { return d.yLabel; })
+          .attr('data-col',  function(d)    { return d.xLabel; })
           .attr('data-x-co', function(d,i,j){ return j; })
-          .attr('data-y-co', function(d,i){ return i; })
+          .attr('data-y-co', function(d,i)  { return i; })
           .text(function(d){ return d.value; });
 
       break; // table
@@ -326,10 +328,11 @@ function draw(data, chartType){
 
 //   };
 
-  function unique(array) {
-    return $.grep(array, function(el, index) {
-        return index == $.inArray(el, array);
-    });
-  };
-
 };
+
+function unique(array) {
+  return $.grep(array, function(el, index) {
+      return index == $.inArray(el, array);
+  });
+};
+
