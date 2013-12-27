@@ -1,0 +1,66 @@
+extends layout
+
+block content
+
+
+  .row.panel.panel-primary
+    .panel-heading
+
+        #chartTypes.btn-group
+          button#toJSON.btn.btn-primary(data-value='json') JSON
+          button#toTable.btn.btn-primary(data-value='table') Table
+          button#toLine.btn.btn-primary.active(data-value='line') Line
+          //- button#toArea.btn.btn-primary(data-value='area') Area
+
+        #dataset.btn-group
+          .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Select a new data set &nbsp;
+            span.caret
+
+          ul.dropdown-menu
+            li(data-value='zero_dimension' tab-index='-1'): a(href='#') 0th Dimension
+            li(data-value='first_dimension' tab-index='-1'): a(href='#') 1st Dimension
+            li.active(data-value='second_dimension' tab-index='-1'): a(href='#') 2nd Dimension
+            li(data-value='third_dimension' tab-index='-1'): a(href='#') 3rd Dimension
+
+    .panel-body
+      h2#charTitle Untitled
+      p#chartDesc
+      hr
+      #canvas
+
+  script
+    var table = !{tableObj};
+    var tables = [];
+    for(var i=0;i<Object.keys(table).length;i++){ tables.push(Object.keys(table)[i]) };
+    var currentTable = tables[2];
+    var currentType = 'line';
+
+    // set chart title in html
+    $('#charTitle').html(table[currentTable].title);
+    $('#chartDesc').html(table[currentTable].description);
+
+    draw(table[currentTable].rows, currentType);
+
+    // new chart type
+    $('#chartTypes .btn').click(function(){ 
+      currentType = $(this).attr('data-value');
+      draw(table[currentTable].rows, currentType);
+      $('.btn').not(this).removeClass('active'); 
+      $(this).addClass('active'); 
+    });
+
+    // new data set
+    $('#dataset li').click(function(){
+      currentTable = $(this).attr('data-value');
+      draw(table[currentTable].rows, currentType);
+      $('li').not(this).removeClass('active');
+      $(this).addClass('active');
+      $('#charTitle').html(table[currentTable].title);
+      $('#chartDesc').html(table[currentTable].description);
+      });
+
+    // fullscreen
+    //- $('div').not('.panel-body').addClass('hidden')
+    //- $('.panel-body').children().removeClass('hidden')
+    //- $('.panel-body').appendTo('body')
+

@@ -5,7 +5,7 @@
 
 var express = require('express')
   , routes = require('./routes')
-  , user = require('./routes/user')
+  , data = require('./data/tableObj.json')
   , http = require('http')
   , path = require('path');
 
@@ -24,7 +24,9 @@ app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', routes.index);
-app.get('/users', user.list);
+app.get('/chart-maker', function(req,res){ 
+  res.render('chart_maker', { tableObj: JSON.stringify(data) }); 
+});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

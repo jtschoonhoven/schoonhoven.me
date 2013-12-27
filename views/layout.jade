@@ -9,4 +9,21 @@ html
     script(type='text/javascript', src='/javascripts/d3.v3.min.js')
     script(type='text/javascript', src='/javascripts/chart_maker.js')
   body
-    block content
+    .container
+
+      .row
+        h1.col-xs-12.hidden-xs jonathan<small>.</small>schoonhoven<small>.</small>me
+          .small A personal website and sandbox for Node + D3 + jQuery
+        h2.col-xs-12.visible-xs.hidden-sm.hidden-md.hidden-lg jonathan.schoonhoven.me
+
+      .row
+        .colorbar.color1.col-xs-4.hidden-xs: hr
+        .colorbar.color2.col-xs-4.hidden-xs: hr
+        .colorbar.color3.col-xs-4.hidden-xs: hr
+
+      .row
+        ul.nav.navbar-nav
+          li: a(href='/') Home
+          li: a(href='/chart-maker') Chart Maker
+    
+      block content

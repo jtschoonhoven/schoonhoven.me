@@ -24,7 +24,7 @@ function draw(data, chartType){
   };
   // fill xLabels
   for(var i=0; i<data[0].length; i++){ 
-    if(data[0][i].xLabel){ xLabels.push(data[0][i].xLabel) };
+    if(typeof data[0][i] != 'undefined'){ xLabels.push(data[0][i].xLabel) };
   };
   // fill yLabels
   for(var i=0; i<data.length; i++){
@@ -50,7 +50,7 @@ function draw(data, chartType){
   var canvas_x = $('#canvas').width();
   var canvas_y = $(window).height() - 250;
   var margin_top = 20;
-  var margin_right = 20;
+  var margin_right = 40;
   var margin_bottom = 30;
   var margin_left = 100;
   var max = d3.max(d3.max(values));
@@ -68,9 +68,26 @@ function draw(data, chartType){
 
     case 'json':
 
-      var canvas = d3.select('#canvas')
-        .append('div')
-        .text(JSON.stringify(data, null, '\t'));
+    function syntaxHighlight(json) { // thanks to Pumbaa80: http://stackoverflow.com/questions/4810841/json-pretty-print-using-javascript
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+          var cls = 'number';
+          if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                  cls = 'key';
+              } else {
+                  cls = 'string';
+              }
+          } else if (/true|false/.test(match)) {
+              cls = 'boolean';
+          } else if (/null/.test(match)) {
+              cls = 'null';
+          }
+          return '<span class="' + cls + '">' + match + '</span>';
+      });
+    };
+
+    $('#canvas').append('<pre>'+syntaxHighlight('{'+JSON.stringify(data)+'}')+'</pre>');
 
     break; //json
 
@@ -184,6 +201,7 @@ function draw(data, chartType){
 
       break; // table
 
+      case 'area':
       case 'line':
 
       var canvas = d3.select('#canvas')
@@ -197,19 +215,35 @@ function draw(data, chartType){
         .append('g')
         .attr('class', 'group');
 
-      var pathGen = d3.svg.line()
+      if(chartType == 'area'){
+        var pathGen = d3.svg.area()
+          .x(function(d,i){ return scale_x(i); })
+          .y0(function(){ return (canvas_y - margin_bottom); })
+          .y1(function(d){ return scale_y(d.value); })
+          .interpolate('cardinal');
+
+        var path = group.selectAll('.fill')
+          .data(data)
+          .enter()
+          .append('path')
+          .attr('d', pathGen)
+          .attr('class', 'fill')
+          .attr('fill', '#43B386')
+      };
+
+      var lineGen = d3.svg.line()
         .x(function(d,i){ return scale_x(i); })
         .y(function(d){ return scale_y(d.value); })
         .interpolate('cardinal');
 
-      var path = group.selectAll('path')
+      var line = group.selectAll('.lines')
         .data(data)
         .enter()
         .append('path')
         .attr('class', 'lines')
-        .attr('d', pathGen)
-        .attr('stroke-width', 1.5)
-        .attr('stroke', '#333');
+        .attr('d', lineGen)
+        .attr('stroke-width', 2)
+        .attr('stroke', '#276ba4');
 
       var circles = group.selectAll('circle')
         .data(function(d){ return d; })
@@ -217,14 +251,40 @@ function draw(data, chartType){
         .append('circle')
         .attr('cx', function(d,i,j){ return scale_x(i); })
         .attr('cy', function(d){ return scale_y(d.value); })
-        .attr('r', 5)
+        .attr('r', 4)
         .style('fill', '#155183');
 
+      var ordinalScale = d3.scale.ordinal()
+        .domain( function(){ 
+          var domain = [];
+          var n = data[0].length;
+          for(var i=0; i<n; i++){
+            domain.push(data[0][i].name)
+          }
+          return domain;
+        })
+        .range( );
+
+      var domain_x = function(){ 
+          var d = [];
+          var n = data[0].length;
+          for(var i=0; i<n; i++){ d.push(data[0][i].xLabel); };
+          return d;
+        };
+
+      var range_x = function(){
+          var r = [];
+          var n = data[0].length;
+          for(var i=0; i<data[0].length; i++){ 
+            r.push(margin_left+((canvas_x-(margin_left+margin_right))/(n-1))*i); 
+          };
+          return r;
+        };
+
       var xAxisGen = d3.svg.axis()
-        .scale(scale_x)
+        .scale(d3.scale.ordinal().domain(domain_x()).range(range_x()))
         .orient('bottom')
-        .ticks(data[0].length - 1)
-        .tickFormat(d3.format('1')); // integers, or '.1%' // for %'s'
+        // .tickFormat(d3.format('')); // integers, or '.1%' // for %'s'
 
       var xAxis = canvas.append('g')
       .attr('transform', 'translate(0,' + (canvas_y - margin_bottom * .9) + ')')
@@ -240,20 +300,6 @@ function draw(data, chartType){
         .attr('class', 'y axis')
         .attr('transform', 'translate('+ (margin_left) + ', 0)')
         .call(yAxisGen);
-
-      // var yAxisGen = d3.svg.axis()
-      //   .scale(scale_y)
-      //   .orient('left');
-
-      // var yAxis = canvas.append('g')
-      //   .attr('class', 'yAxis')
-      //   .call(yAxisGen)
-      //   .append('text')
-      //   .attr('transform', 'rotate(-90)')
-      //   .attr('y', 6)
-      //   .attr('dy', '1em')
-      //   .style('text-anchor', 'end')
-      //   .text('axisss')
 
       break;
 
