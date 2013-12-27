@@ -4,22 +4,24 @@ block content
   .container
 
     .row
-      h1 jonathan<small>.</small>schoonhoven<small>.</small>me
-      p.subtitle A personal website and sandbox for Node + D3 + jQuery
+      h1.col-xs-12.hidden-xs jonathan<small>.</small>schoonhoven<small>.</small>me
+      p.col-xs-12.hidden-xs.subtitle A personal website and sandbox for Node + D3 + jQuery
+      h2.col-xs-12.visible-xs.hidden-sm jonathan.schoonhoven.me()
 
       .colorbar.color1.col-xs-4.hidden-xs: hr
       .colorbar.color2.col-xs-4.hidden-xs: hr
       .colorbar.color3.col-xs-4.hidden-xs: hr
+      //- .colorbar.color3.col-xs-12.visible-xs: hr
 
     .row.panel.panel-primary
       .panel-heading
 
-          #chartTypes.btn-group.btn-group-sm
+          #chartTypes.btn-group
             button#toJSON.btn.btn-primary(data-value='json') JSON
             button#toTable.btn.btn-primary(data-value='table') Table
             button#toLine.btn.btn-primary.active(data-value='line') Line
 
-          #dataset.btn-group.btn-group-sm
+          #dataset.btn-group
             .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Select new data set &nbsp;
               span.caret
 

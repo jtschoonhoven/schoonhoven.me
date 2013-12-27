@@ -51,7 +51,7 @@ function draw(data, chartType){
   var canvas_y = $(window).height() - 250;
   var margin_top = 20;
   var margin_right = 20;
-  var margin_bottom = 20;
+  var margin_bottom = 30;
   var margin_left = 100;
   var max = d3.max(d3.max(values));
   var min = d3.min(d3.min(values));
@@ -143,7 +143,7 @@ function draw(data, chartType){
         // draw table
         var canvas = d3.select('#canvas')
           .append('table')
-          .attr('class', 'table table-striped table-bordered table-hover table-condensed table-responsive');
+          .attr('class', 'table table-bordered table-hover table-condensed table-responsive');
 
         var thead = d3.select('table')
           .append('thead')
