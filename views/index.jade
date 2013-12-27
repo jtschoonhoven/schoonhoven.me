@@ -2,35 +2,40 @@ extends layout
 
 block content
   .container
-    #expand.btn.btn-link.pull-right Toggle Sidebar
-    #filter.dropdown.pull-right
-      .btn.btn-link(data-toggle='dropdown') Dropdown &nbsp;
-        b.caret
-      ul.dropdown-menu
-        li: a(tabindex='-1' href='#') Item1
 
     .row
       h1 jonathan<small>.</small>schoonhoven<small>.</small>me
-      p A personal website and sandbox for Node + Express + D3
-      hr
-    .row
-      #sidebar.col-sm-3
-        ul.nav.nav-pills.nav-stacked
-          li(data-value='zero_dimension'): a(href='#') 0th Dimension
-          li(data-value='first_dimension'): a(href='#') 1st Dimension
-          li.active(data-value='second_dimension'): a(href='#') 2nd Dimension
-          li(data-value='third_dimension'): a(href='#') 3rd Dimension
-      #content.col-sm-9
-        #chartTypes.btn-group.btn-group-sm
-          #toJSON.btn.btn-link(data-value='json') JSON
-          #toTable.btn.btn-link(data-value='table') Table
-          #toLine.btn.btn-link.active(data-value='line') Line
-        p#charTitle.lead
-        p#chartDesc Description Goes Here
-        #canvas
-      hr
-  script
+      p.subtitle A personal website and sandbox for Node + D3 + jQuery
 
+      .colorbar.color1.col-xs-4.hidden-xs: hr
+      .colorbar.color2.col-xs-4.hidden-xs: hr
+      .colorbar.color3.col-xs-4.hidden-xs: hr
+
+    .row.panel.panel-primary
+      .panel-heading
+
+          #chartTypes.btn-group.btn-group-sm
+            button#toJSON.btn.btn-primary(data-value='json') JSON
+            button#toTable.btn.btn-primary(data-value='table') Table
+            button#toLine.btn.btn-primary.active(data-value='line') Line
+
+          #dataset.btn-group.btn-group-sm
+            .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Select new data set &nbsp;
+              span.caret
+
+            ul.dropdown-menu
+              li(data-value='zero_dimension' tab-index='-1'): a(href='#') 0th Dimension
+              li(data-value='first_dimension' tab-index='-1'): a(href='#') 1st Dimension
+              li.active(data-value='second_dimension' tab-index='-1'): a(href='#') 2nd Dimension
+              li(data-value='third_dimension' tab-index='-1'): a(href='#') 3rd Dimension
+
+      .panel-body
+        h2#charTitle Untitled
+        p#chartDesc
+        hr
+        #canvas
+
+  script
     var table = !{tableObj};
     var tables = [];
     for(var i=0;i<Object.keys(table).length;i++){ tables.push(Object.keys(table)[i]) };
@@ -43,7 +48,6 @@ block content
 
     draw(table[currentTable].rows, currentType);
 
-
     // new chart type
     $('#chartTypes .btn').click(function(){ 
       currentType = $(this).attr('data-value');
@@ -53,7 +57,7 @@ block content
     });
 
     // new data set
-    $('#sidebar li').click(function(){
+    $('#dataset li').click(function(){
       currentTable = $(this).attr('data-value');
       draw(table[currentTable].rows, currentType);
       $('li').not(this).removeClass('active');
@@ -61,12 +65,4 @@ block content
       $('#charTitle').html(table[currentTable].title);
       $('#chartDesc').html(table[currentTable].description);
       });
-    
-    // toggle widescreen
-    $('#expand').click(function(){ 
-      $('#sidebar').toggleClass('hidden'); 
-      $('#content').toggleClass('col-sm-9');
-      $('#content').toggleClass('col-sm-12');
-      $(this).toggleClass('active'); 
-    });
 

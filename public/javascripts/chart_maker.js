@@ -49,17 +49,20 @@ function draw(data, chartType){
 
   var canvas_x = $('#canvas').width();
   var canvas_y = $(window).height() - 250;
-  var margin = 80;
+  var margin_top = 20;
+  var margin_right = 20;
+  var margin_bottom = 20;
+  var margin_left = 100;
   var max = d3.max(d3.max(values));
   var min = d3.min(d3.min(values));
 
   var scale_x = d3.scale.linear()
     .domain([0, data[0].length - 1])
-    .range([margin, canvas_x - margin]);
+    .range([margin_left, canvas_x - margin_right]);
 
   var scale_y = d3.scale.linear()
     .domain([max, 0])
-    .range([margin, canvas_y - margin]);
+    .range([margin_top, canvas_y - margin_bottom]);
 
   switch(chartType){
 
@@ -203,9 +206,10 @@ function draw(data, chartType){
         .data(data)
         .enter()
         .append('path')
+        .attr('class', 'lines')
         .attr('d', pathGen)
-        .attr('stroke', '#BBB')
-        .attr('stroke-width', 1);
+        .attr('stroke-width', 1.5)
+        .attr('stroke', '#333');
 
       var circles = group.selectAll('circle')
         .data(function(d){ return d; })
@@ -213,8 +217,8 @@ function draw(data, chartType){
         .append('circle')
         .attr('cx', function(d,i,j){ return scale_x(i); })
         .attr('cy', function(d){ return scale_y(d.value); })
-        .attr('r', 2)
-        .style('fill', 'black');
+        .attr('r', 5)
+        .style('fill', '#155183');
 
       var xAxisGen = d3.svg.axis()
         .scale(scale_x)
@@ -223,18 +227,18 @@ function draw(data, chartType){
         .tickFormat(d3.format('1')); // integers, or '.1%' // for %'s'
 
       var xAxis = canvas.append('g')
-      .attr('transform', 'translate(0,' + (canvas_y - margin) + ')')
+      .attr('transform', 'translate(0,' + (canvas_y - margin_bottom * .9) + ')')
         .attr('class', 'x axis')
         .call(xAxisGen);
 
       var yAxisGen = d3.svg.axis()
         .scale(scale_y)
         .orient('left')
-        .ticks(4);
+        .ticks(5);
 
       var yAxis = canvas.append('g')
         .attr('class', 'y axis')
-        .attr('transform', 'translate('+ (margin) + ', 0)')
+        .attr('transform', 'translate('+ (margin_left) + ', 0)')
         .call(yAxisGen);
 
       // var yAxisGen = d3.svg.axis()

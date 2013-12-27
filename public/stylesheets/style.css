@@ -1,33 +1,67 @@
 body {
-  background-color: #FBFBFB;
-}
+  background-color: #F9F9F9;
+  color: #222;}
+
+h1 {
+  font-size: 3em;
+  color: #222;}
+
+.subtitle {
+  font-size: 1.2em;
+  color: #222;}
+
+h2 {
+  font-size: 2em;
+  color: #222;}
 
 .row {
-  margin:5px 0px 5px 0px;
+  margin: 0px 0px 30px 0px;}
+
+.btn, 
+.btn.active, 
+.btn:hover {
+  border: solid 1px #71B0E4;}
+
+hr {
+  margin: 5px 0 5px 0;
+  padding: 0;
 }
 
-li {
-  border-bottom: 1px solid #EEE;
-}
+.color1 hr { 
+  border-top: 2px solid #428CCA;}
+
+.color2 hr { 
+  border-top: 2px solid #FFD247;}
+
+.color3 hr { 
+  border-top: 2px solid #FF7E47;}
+
+.colorbar {
+  margin: 0;
+  padding: 0;}
+
+.panel{
+  border: solid 2px #428BCA;}
 
 #canvas {
-  overflow: scroll;
-}
+  overflow: scroll;}
 
 /* line chart styles */
+
+.lines path {
+  fill: none;
+  stroke: #155183;
+  stroke-width: 1.5px;}
+
 .axis path{
   fill: none;
-  stroke: none;
-}
+  stroke: #155183;}
 
 .axis line {
   fill: none;
-  stroke: none;
-  shape-renderings: crispEdges;
-}
+  stroke: #155183;}
 
 .axis text {
   font-family: sans-serif;
-  color: #333;
-  font-size: 11px;
-}
+  fill: #155183;
+  font-size: 11px;}
