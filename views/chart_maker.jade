@@ -17,10 +17,12 @@ block content
             span.caret
 
           ul.dropdown-menu
-            li(data-value='zero_dimension' tab-index='-1'): a(href='#') 0th Dimension
+            li(data-value='zero_dimension' tab-index='-1'): a(href='#') Single Value
             li(data-value='first_dimension' tab-index='-1'): a(href='#') 1st Dimension
             li.active(data-value='second_dimension' tab-index='-1'): a(href='#') 2nd Dimension
             li(data-value='third_dimension' tab-index='-1'): a(href='#') 3rd Dimension
+            li(data-value='distribution' tab-index='-1'): a(href='#') Data Distribution
+            li(data-value='units_by_country_and_event' tab-index='-1'): a(href='#') Units by Event
 
     .panel-body
       h2#charTitle Untitled
@@ -33,7 +35,7 @@ block content
     var tables = [];
     for(var i=0;i<Object.keys(table).length;i++){ tables.push(Object.keys(table)[i]) };
     var currentTable = tables[2];
-    var currentType = 'line';
+    var currentType = table[currentTable].chartType;
 
     // set chart title in html
     $('#charTitle').html(table[currentTable].title);
@@ -52,6 +54,7 @@ block content
     // new data set
     $('#dataset li').click(function(){
       currentTable = $(this).attr('data-value');
+      currentType  = table[currentTable].chartType;
       draw(table[currentTable].rows, currentType);
       $('li').not(this).removeClass('active');
       $(this).addClass('active');

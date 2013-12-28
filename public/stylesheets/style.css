@@ -17,13 +17,11 @@ h2 {
 h1 .small {
   font-size: .5em;
   padding: 5px 0;
-  margin: 0;
-}
+  margin: 0;}
 
 p {
   font-size: 1.2em;
-  padding: 10px 0 10px 0;
-}
+  padding: 10px 0 10px 0;}
 
 .navbar-nav li a {
   padding: 10px 20px 10px 20px;}
@@ -49,6 +47,15 @@ hr {
 .color3 hr { 
   border-top: 2px solid #FF7E47;}
 
+.color4 hr { 
+  border-top: 3px solid #666;}
+
+.color5 hr { 
+  border-top: 3px solid #999;}
+
+.color6 hr { 
+  border-top: 3px solid #BBB;}
+
 .colorbar {
   margin: 0;
   padding: 0;}
@@ -63,6 +70,20 @@ hr {
 table thead th {
   background-color: #43B386;
   color: #FFF;}
+
+#gradient .row {
+  position:absolute;
+  bottom:0;
+}
+
+.greyFill{
+  background-color: #555;
+  bottom:0px;}
+
+.blackFill{
+  background-color: #111;
+  height: 50px;
+  bottom:0px;}
 
 /* line chart styles */
 
