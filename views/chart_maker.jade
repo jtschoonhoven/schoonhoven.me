@@ -3,32 +3,36 @@ extends layout
 block content
 
 
-  .row.panel.panel-primary
-    .panel-heading
-      span.small Make Chart: &nbsp;
-      #chartTypes.btn-group.btn-group-sm
-        button#toJSON.btn.btn-primary(data-value='json') JSON
-        button#toTable.btn.btn-primary(data-value='table') Table
-        button#toLine.btn.btn-primary(data-value='line') Line
-        //- button#toArea.btn.btn-primary(data-value='area') Area
+  .row
 
-      #dataset.btn-group.btn-group-sm
-        .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Select a new data set &nbsp;
-          span.caret
-        ul.dropdown-menu
-          li.active(data-value='distribution' tab-index='-1'): a(href='#') Data Distribution
-          li(data-value='units_by_country_and_event' tab-index='-1'): a(href='#') Units by Event
-
-      #pivot.btn-group.btn-group-sm
-        .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Pivot Out &nbsp;
-          span.caret
-        ul.dropdown-menu
-
-    .panel-body
+    .row
       h2#chartTitle Untitled
       p#chartDesc
       hr
-      #canvas
+
+    .panel.panel-primary
+      .panel-heading
+        span.small Options: &nbsp;
+        #chartTypes.btn-group.btn-group-sm
+          button#toJSON.btn.btn-primary(data-value='json') JSON
+          button#toTable.btn.btn-primary(data-value='table') Table
+          button#toLine.btn.btn-primary(data-value='line') Line
+          //- button#toArea.btn.btn-primary(data-value='area') Area
+
+        #dataset.btn-group.btn-group-sm
+          .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Select a new data set &nbsp;
+            span.caret
+          ul.dropdown-menu
+            li.active(data-value='distribution' tab-index='-1'): a(href='#') Data Distribution
+            li(data-value='units_by_country_and_event' tab-index='-1'): a(href='#') Units by Event
+
+        #pivot.btn-group.btn-group-sm
+          .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Pivot Out &nbsp;
+            span.caret
+          ul.dropdown-menu
+
+      .panel-body
+        #canvas
 
   script
     var table = !{tableObj};

@@ -27,7 +27,7 @@ p {
   padding: 10px 20px 10px 20px;}
 
 .row {
-  margin: 0;}
+  margin: 5px 0;}
 
 .btn,
 .btn.active, 
@@ -60,44 +60,33 @@ hr {
   margin: 0;
   padding: 0;}
 
-.panel{
-  border: solid 2px #428BCA;
-  border: none;
-  background-color: FEFEFE;}
+.panel {
+  border:none;
+  background-color: #FDFDFD;}
 
 .panel-heading{
-  padding: 5px 5px 5px 10px;}
+  border: solid 2px #428BCA;
+  /*border: none;*/
+  color: #FFF;
+  background-color: #428BCA;
+  padding: 5px 5px 5px 10px;
+  margin-bottom: 0;}
 
 .panel-body{
-  margin: 10px 0;
-  border: none;
-  padding: 0;}
+  padding:0;
+  border:none;}
 
 #chartTitle,
 #chartDesc {
-  padding: 0 0 0 20px;
-}
+  padding: 10px 20px 0 20px;}
 
 #canvas {
   overflow: scroll;}
 
 table thead th {
-  background-color: #8fd1d7;
+  background-color: #71b0e4;
+  border: none;
   color: #FFF;}
-
-#gradient .row {
-  position:absolute;
-  bottom:0;
-}
-
-.greyFill{
-  background-color: #555;
-  bottom:0px;}
-
-.blackFill{
-  background-color: #111;
-  height: 50px;
-  bottom:0px;}
 
 /* line chart styles */
 
