@@ -366,3 +366,6 @@ function unique(array) {
   });
 };
 
+function pivotOut(pivotMe){
+  console.log('To pivot: ' + pivotMe);
+}

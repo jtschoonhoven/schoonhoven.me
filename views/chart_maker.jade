@@ -20,11 +20,9 @@ block content
           li(data-value='units_by_country_and_event' tab-index='-1'): a(href='#') Units by Event
 
       #pivot.btn-group.btn-group-sm
-        .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Pivot &nbsp;
+        .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Pivot Out &nbsp;
           span.caret
         ul.dropdown-menu
-          li.active: a(href='#') ...
-          li: a(href='#') ...
 
     .panel-body
       h2#chartTitle Untitled
@@ -44,6 +42,7 @@ block content
     $('[data-value="' + currentType + '"]').addClass('active');
 
     draw(table[currentTable].rows, currentType);
+    addColumnsToPivotBtn();
 
     // new chart type
     $('#chartTypes .btn').click(function(){ 
@@ -62,10 +61,21 @@ block content
       $(this).addClass('active');
       $('#chartTitle').html(table[currentTable].title);
       $('#chartDesc').html(table[currentTable].description);
+      addColumnsToPivotBtn();
       });
 
-    // fullscreen
-    //- $('div').not('.panel-body').addClass('hidden')
-    //- $('.panel-body').children().removeClass('hidden')
-    //- $('.panel-body').appendTo('body')
+    // pivot
+    $('#pivot li').click(function(){
+      console.log('Clicked: '+ $(this).attr('data-pivot'));
+      pivotOut($(this).attr('data-pivot'));
+      })
 
+    function addColumnsToPivotBtn(){
+      $('#pivot ul').empty();
+      $('th').each(function(i,d){
+        $('#pivot ul').append('<li data-pivot="'+ $(this).html() +'"><a href="#">'+ $(this).html() +'</a></li>');
+      });
+      $('th').each(function(i){
+        $(this).css('textTransform', 'capitalize');
+      });
+    };
