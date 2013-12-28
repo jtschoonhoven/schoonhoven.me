@@ -26,11 +26,17 @@ block content
 
     var draw = function(data){
 
-      var circle = canvas.selectAll('circle')
+      var g = canvas.selectAll('g')
+        .data([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17])
+        .enter()
+        .append('g')
+        .attr('transform', function(d){ return 'translate('+ d * radius * 2 +',0)'; });
+
+      var circle = g.selectAll('circle')
         .data(data)
         .enter()
         .append('circle')
-        .attr('cx', function(d){ return (100 + radius * 2 * d) ;})
+        .attr('cx', -100)
         .attr('cy', 100)
         .attr('r', radius)
         .style('fill', 'none')
@@ -43,15 +49,18 @@ block content
         .transition()
         .duration(1000)
         .ease('linear')
-        .attr('cx', function(d){ return (100 + radius * 2 * d) ;})
+        .attr('cx', function(d){ return (radius * 2 - 100) ;})
         .each('end', function(){ redraw([1]); });
       };
 
 
     var redraw = function(data){
-      var circle = canvas.selectAll('circle')
+
+      var g = canvas.selectAll('g')
+
+      var circle = g.selectAll('circle')
         .data(data)
-        .attr('cx', function(d){ return (100 + radius * 2 * d) ;})
+        .attr('cx', -100)
 
         data = [2];
 
@@ -59,7 +68,7 @@ block content
         .transition()
         .duration(1000)
         .ease('linear')
-        .attr('cx', function(d){ return (100 + radius * 2 * d) ;})
+        .attr('cx', function(d){ return (radius * 2 - 100) ;})
         .each('end', function(){ redraw([1]); });
       }
 
