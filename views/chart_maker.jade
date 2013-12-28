@@ -5,27 +5,29 @@ block content
 
   .row.panel.panel-primary
     .panel-heading
+      span.small Make Chart: &nbsp;
+      #chartTypes.btn-group.btn-group-sm
+        button#toJSON.btn.btn-primary(data-value='json') JSON
+        button#toTable.btn.btn-primary(data-value='table') Table
+        button#toLine.btn.btn-primary(data-value='line') Line
+        //- button#toArea.btn.btn-primary(data-value='area') Area
 
-        #chartTypes.btn-group
-          button#toJSON.btn.btn-primary(data-value='json') JSON
-          button#toTable.btn.btn-primary(data-value='table') Table
-          button#toLine.btn.btn-primary.active(data-value='line') Line
-          //- button#toArea.btn.btn-primary(data-value='area') Area
+      #dataset.btn-group.btn-group-sm
+        .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Select a new data set &nbsp;
+          span.caret
+        ul.dropdown-menu
+          li.active(data-value='distribution' tab-index='-1'): a(href='#') Data Distribution
+          li(data-value='units_by_country_and_event' tab-index='-1'): a(href='#') Units by Event
 
-        #dataset.btn-group
-          .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Select a new data set &nbsp;
-            span.caret
-
-          ul.dropdown-menu
-            li(data-value='zero_dimension' tab-index='-1'): a(href='#') Single Value
-            li(data-value='first_dimension' tab-index='-1'): a(href='#') 1st Dimension
-            li.active(data-value='second_dimension' tab-index='-1'): a(href='#') 2nd Dimension
-            li(data-value='third_dimension' tab-index='-1'): a(href='#') 3rd Dimension
-            li(data-value='distribution' tab-index='-1'): a(href='#') Data Distribution
-            li(data-value='units_by_country_and_event' tab-index='-1'): a(href='#') Units by Event
+      #pivot.btn-group.btn-group-sm
+        .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Pivot &nbsp;
+          span.caret
+        ul.dropdown-menu
+          li.active: a(href='#') ...
+          li: a(href='#') ...
 
     .panel-body
-      h2#charTitle Untitled
+      h2#chartTitle Untitled
       p#chartDesc
       hr
       #canvas
@@ -34,12 +36,12 @@ block content
     var table = !{tableObj};
     var tables = [];
     for(var i=0;i<Object.keys(table).length;i++){ tables.push(Object.keys(table)[i]) };
-    var currentTable = tables[2];
+    var currentTable = tables[0];
     var currentType = table[currentTable].chartType;
 
-    // set chart title in html
-    $('#charTitle').html(table[currentTable].title);
+    $('#chartTitle').html(table[currentTable].title);
     $('#chartDesc').html(table[currentTable].description);
+    $('[data-value="' + currentType + '"]').addClass('active');
 
     draw(table[currentTable].rows, currentType);
 
@@ -58,7 +60,7 @@ block content
       draw(table[currentTable].rows, currentType);
       $('li').not(this).removeClass('active');
       $(this).addClass('active');
-      $('#charTitle').html(table[currentTable].title);
+      $('#chartTitle').html(table[currentTable].title);
       $('#chartDesc').html(table[currentTable].description);
       });
 

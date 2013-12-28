@@ -62,13 +62,27 @@ hr {
 
 .panel{
   border: solid 2px #428BCA;
+  border: none;
   background-color: FEFEFE;}
+
+.panel-heading{
+  padding: 5px 5px 5px 10px;}
+
+.panel-body{
+  margin: 10px 0;
+  border: none;
+  padding: 0;}
+
+#chartTitle,
+#chartDesc {
+  padding: 0 0 0 20px;
+}
 
 #canvas {
   overflow: scroll;}
 
 table thead th {
-  background-color: #43B386;
+  background-color: #8fd1d7;
   color: #FFF;}
 
 #gradient .row {
