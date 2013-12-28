@@ -1,0 +1,97 @@
+extends layout
+
+block content
+
+  hr
+  .row
+    h2#chartTitle Etch-a-Sketch!
+    p#chartDesc Trying things out. You can always shake it.
+    #clickMe.btn.btn-link Click Me
+    hr
+    #canvas
+
+  script
+    $('#clickMe').click(function(){ first(); })
+
+    var data = [1];
+    var radius = 30;
+
+    var canvas_x = $('#canvas').width();
+    var canvas_y = $(window).height() - 250;
+
+    var canvas = d3.select('#canvas').append('svg')
+      .attr('height', canvas_y)
+      .attr('width', canvas_x)
+      .style('background-color', 'lightblue');
+
+    var draw = function(data){
+
+      var circle = canvas.selectAll('circle')
+        .data(data)
+        .enter()
+        .append('circle')
+        .attr('cx', function(d){ return (100 + radius * 2 * d) ;})
+        .attr('cy', 100)
+        .attr('r', radius)
+        .style('fill', 'none')
+        .style('stroke', 'black')
+        .style('stroke-width', 3);
+
+      data = [2];
+
+      circle.data(data)
+        .transition()
+        .duration(1000)
+        .ease('linear')
+        .attr('cx', function(d){ return (100 + radius * 2 * d) ;})
+        .each('end', function(){ redraw([1]); });
+      };
+
+
+    var redraw = function(data){
+      var circle = canvas.selectAll('circle')
+        .data(data)
+        .attr('cx', function(d){ return (100 + radius * 2 * d) ;})
+
+        data = [2];
+
+      circle.data(data)
+        .transition()
+        .duration(1000)
+        .ease('linear')
+        .attr('cx', function(d){ return (100 + radius * 2 * d) ;})
+        .each('end', function(){ redraw([1]); });
+      }
+
+      draw([1]);
+
+    //- var first = function(){
+
+    //-   data.unshift(d3.min(data)-1);
+    //-   //- data.pop();
+
+    //-   var g = canvas.selectAll('g')
+    //-     .data(data);
+
+    //-   g.transition()
+    //-     .duration(1000)
+    //-     .attr('transform', function(d,i){ return 'translate('+ (200 + radius * d * 2) +',100)' })
+    //-     .each('end', function(){ first(); });
+
+    //-   g.data(data)
+    //-     .enter()
+    //-     .append('g')
+    //-     .attr('transform', function(d,i){ return 'translate('+ (200 + radius * d * 2) +',100)' })
+    //-       .append('circle')
+    //-       .attr('r', radius)
+    //-       .style('stroke', 'black')
+    //-       .style('fill', 'none');
+
+    //-   g.exit().remove();
+
+
+    //- }
+
+
+  
+

@@ -4,7 +4,6 @@
  */
 
 var express = require('express')
-  , routes = require('./routes')
   , data = require('./data/tableObj.json')
   , http = require('http')
   , path = require('path');
@@ -23,9 +22,14 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', routes.index);
+app.get('/', function(req,res){ res.render('index') });
+
 app.get('/chart-maker', function(req,res){ 
   res.render('chart_maker', { tableObj: JSON.stringify(data) }); 
+});
+
+app.get('/etch-a-sketch', function(req,res){ 
+  res.render('etch_a_sketch'); 
 });
 
 http.createServer(app).listen(app.get('port'), function(){
