@@ -11,7 +11,7 @@ block content
     #canvas
 
   script
-    $('#clickMe').click(function(){ enterWave(); })
+    $('#clickMe').click(function(){ enterWave(30); })
 
     var radius = 30;
 
@@ -31,10 +31,14 @@ block content
 
     var data = [canvas_x + radius];
 
-    function enterWave(){
-      var waves = canvas.selectAll('.wave')
+    function enterWave(r){
+
+      var wavesGroup = canvas.append('g')
+        .attr('class', 'wavesGroup');
+
+      var waves = wavesGroup.selectAll('.wave')
         .data(data)
-        .enter()
+        .enter();
 
       var wave = waves.append('g')
         .attr('class', 'wave')
@@ -50,15 +54,15 @@ block content
       wave.append('path')
         .attr('class','arc')
         .attr('d', arcGen)
-        .attr('transform', function(){ return 'translate('+ (radius * 2) +',0)rotate(180)'; });
+        .attr('transform', function(){ return 'translate('+ (r * 2) +',0)rotate(180)'; });
 
-        shiftWaves();
+        shiftWaves(r);
       };
 
 
-    function shiftWaves(){
+    function shiftWaves(r){
 
-      data = data.map(function(d){ return (d - radius * 4); })
+      data = data.map(function(d){ return (d - r * 4); })
 
       canvas.selectAll('.wave')
         .data(data)
@@ -68,23 +72,24 @@ block content
         .attr('transform', function(d){ return 'translate('+ (d) +','+ (canvas_y / 2)+')'})
         .each('end', function(d,i){
           if(data[0] < 0 ){ this.remove(); data.shift();}
-          if(d == d3.max(data)){ addWave(); }
+          if(d == d3.max(data)){ addWave(r); }
         })
     };
 
-    function addWave(){
-      data.push(d3.max(data)+radius*4)
+    function addWave(r){
+      data.push(d3.max(data)+r*4)
 
-      canvas.selectAll('.wave')
+      var wavesGroup = canvas.selectAll('.wavesGroup')
+
+      wavesGroup.selectAll('.wave')
         .data(data)
         .exit().remove();
 
-      var waves = canvas.selectAll('.wave')
+      var waves = wavesGroup.selectAll('.wave')
         .data(data)
         .enter();
 
-      var wave = waves
-        .append('g')
+      var wave = waves.append('g')
         .attr('class', 'wave')
         .attr('transform', function(d){ return 'translate('+ (d) +','+ (canvas_y / 2)+')'})
         .style('fill', 'none')
@@ -98,9 +103,9 @@ block content
       wave.append('path')
         .attr('class','arc')
         .attr('d', arcGen)
-        .attr('transform', function(){ return 'translate('+ (radius * 2) +',0)rotate(180)'; });
+        .attr('transform', function(){ return 'translate('+ (r * 2) +',0)rotate(180)'; });
 
-        shiftWaves();
+        shiftWaves(r);
     };
 
     //- var data = [1];
