@@ -11,7 +11,7 @@ block content
     #canvas
 
   script
-    $('#clickMe').click(function(){ enterCircles(); })
+    $('#clickMe').click(function(){ enterWave(); })
 
     var radius = 30;
 
@@ -29,55 +29,78 @@ block content
       .startAngle(270 * (Math.PI/180))
       .endAngle(90 * (Math.PI/180));
 
+    var data = [canvas_x + radius];
 
-    var data = [600,660];
-
-    function enterCircles(){
-      canvas.selectAll('circle')
+    function enterWave(){
+      var waves = canvas.selectAll('.wave')
         .data(data)
         .enter()
-        .append('circle')
-        .attr('cx', function(d){ return d; })
-        .attr('cy', 100 )
-        .attr('r', radius)
+
+      var wave = waves.append('g')
+        .attr('class', 'wave')
+        .attr('transform', function(d){ return 'translate('+ (d) +','+ (canvas_y / 2)+')'})
         .style('fill', 'none')
         .style('stroke-width', 5)
         .style('stroke', 'black');
 
-        shiftCircles();
+      wave.append('path')
+        .attr('class', 'arc')
+        .attr('d', arcGen);
+
+      wave.append('path')
+        .attr('class','arc')
+        .attr('d', arcGen)
+        .attr('transform', function(){ return 'translate('+ (radius * 2) +',0)rotate(180)'; });
+
+        shiftWaves();
       };
 
-    function shiftCircles(){
-      data = data.map(function(d){ return (d - radius * 2); })
-      var circles = canvas.selectAll('circle')
+
+    function shiftWaves(){
+
+      data = data.map(function(d){ return (d - radius * 4); })
+
+      canvas.selectAll('.wave')
         .data(data)
         .transition()
-        .duration(2000)
+        .duration(1000)
         .ease('linear')
-        .attr('cx', function(d){ return d; })
+        .attr('transform', function(d){ return 'translate('+ (d) +','+ (canvas_y / 2)+')'})
         .each('end', function(d,i){
-          if(data[0] < 400 ){ this.remove(); data.shift();}
-          if(d == d3.max(data)){ console.log(data); addCircle(); }
+          if(data[0] < 0 ){ this.remove(); data.shift();}
+          if(d == d3.max(data)){ addWave(); }
         })
     };
 
-    function addCircle(){
-      data.push(d3.max(data)+radius*2)
-      var circles = canvas.selectAll('circle')
+    function addWave(){
+      data.push(d3.max(data)+radius*4)
+
+      canvas.selectAll('.wave')
         .data(data)
+        .exit().remove();
 
-      circles.exit().remove();
+      var waves = canvas.selectAll('.wave')
+        .data(data)
+        .enter();
 
-      circles.enter()
-        .append('circle')
-        .attr('cx', function(d){ return d; })
-        .attr('cy', 100 )
-        .attr('r', radius)
+      var wave = waves
+        .append('g')
+        .attr('class', 'wave')
+        .attr('transform', function(d){ return 'translate('+ (d) +','+ (canvas_y / 2)+')'})
         .style('fill', 'none')
         .style('stroke-width', 5)
         .style('stroke', 'black');
 
-        shiftCircles();
+      wave.append('path')
+        .attr('class', 'arc')
+        .attr('d', arcGen);
+
+      wave.append('path')
+        .attr('class','arc')
+        .attr('d', arcGen)
+        .attr('transform', function(){ return 'translate('+ (radius * 2) +',0)rotate(180)'; });
+
+        shiftWaves();
     };
 
     //- var data = [1];
