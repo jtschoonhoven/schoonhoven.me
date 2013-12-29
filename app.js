@@ -28,8 +28,8 @@ app.get('/chart-maker', function(req,res){
   res.render('chart_maker', { tableObj: JSON.stringify(data) }); 
 });
 
-app.get('/etch-a-sketch', function(req,res){ 
-  res.render('etch_a_sketch'); 
+app.get('/waves', function(req,res){ 
+  res.render('waves'); 
 });
 
 http.createServer(app).listen(app.get('port'), function(){

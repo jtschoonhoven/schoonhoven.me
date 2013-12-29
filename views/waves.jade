@@ -1,0 +1,146 @@
+extends layout
+
+block content
+
+  hr
+  .row
+    h2#chartTitle Etch-a-Sketch!
+    p#chartDesc Trying things out. You can always shake it.
+    #clickMe.btn.btn-link Click Me
+    hr
+    #canvas
+
+  script
+    $('#clickMe').click(function(){ enterWave(30); })
+
+    var radius = 30;
+
+    var canvas_x = $('#canvas').width();
+    var canvas_y = $(window).height() - 250;
+
+    var canvas = d3.select('#canvas').append('svg')
+      .attr('height', canvas_y)
+      .attr('width', canvas_x)
+      .style('background-color', 'lightblue');
+
+    //- var data = [canvas_x + radius];
+    var data = [[canvas_x + radius],
+                [canvas_x + radius],
+                [canvas_x + radius],
+                [canvas_x + radius]];
+
+    var data2 = [{x:canvas_x, r:30},{x:canvas_x, r:30}];
+
+    function enterWave(r){
+
+      var wavesGroup = canvas.selectAll('.wavesGroup')
+        .data(data)
+        .enter()
+        .append('g')
+        .attr('class', 'wavesGroup')
+        .attr('transform', function(d,i){ return 'translate(0,'+ (i * 30 - 50) +')'} );
+
+      var waves = wavesGroup.selectAll('.waveUnit')
+        .data(function(d){ return(d); })
+        .enter();
+
+      var waveUnit = waves.append('g')
+        .attr('class', 'waveUnit')
+        .attr('transform', function(d){ return 'translate('+ (d) +','+ (canvas_y / 2)+')'})
+        .style('fill', 'none')
+        .style('stroke-width', 5)
+        .style('stroke', 'black');
+
+      var arcGen = d3.svg.arc()
+        .innerRadius(radius - 2)
+        .outerRadius(radius + 2)
+        .startAngle(270 * (Math.PI/180))
+        .endAngle(90 * (Math.PI/180));
+
+      waveUnit.append('path')
+        .attr('class', 'arc')
+        .attr('d', arcGen);
+
+      waveUnit.append('path')
+        .attr('class','arc')
+        .attr('d', arcGen)
+        .attr('transform', function(){ return 'translate('+ (r * 2) +',0)rotate(180)'; });
+
+      shiftWaves(r);
+      };
+
+
+    function shiftWaves(r){
+
+      for(var i=0;i<data.length;i++){
+        data[i] = data[i].map(function(d){ return (d - r * 4); })
+      };
+
+      var wavesGroup = canvas.selectAll('.wavesGroup')
+        .data(data);
+
+      var numWaves = 0;
+      for(var i=0;i<data.length;i++){
+        for(var j=0;j<data[i].length;j++){
+          numWaves++;
+        };
+      };
+
+      var j=0;
+      wavesGroup.selectAll('.waveUnit')
+        .data(function(d){ return d; })
+        .transition()
+        .duration(2000)
+        .ease('linear')
+        .attr('transform', function(d){ return 'translate('+ (d) +','+ (canvas_y / 2)+')'})
+        .each('end', function(d,i){
+          j++;
+          if(d[0] < 0 ){ this.remove(); d.shift();}
+          if(j==numWaves){ addWave(r); }
+        })
+    };
+
+    function addWave(r){
+
+      for(var i=0;i<data.length;i++){
+        data[i].push(d3.max(data[i])+r*4);
+      };  
+
+      var wavesGroup = canvas.selectAll('.wavesGroup')
+        .data(data)
+
+      wavesGroup.selectAll('.waveUnit')
+        .data(function(d){ return d; })
+        .exit().remove();
+
+      var waves = wavesGroup.selectAll('.waveUnit')
+        .data(function(d){ return d; })
+        .enter();
+
+      var wave = waves.append('g')
+        .attr('class', 'waveUnit')
+        .attr('transform', function(d){ return 'translate('+ (d) +','+ (canvas_y / 2)+')'})
+        .style('fill', 'none')
+        .style('stroke-width', 5)
+        .style('stroke', 'black');
+
+      var arcGen = d3.svg.arc()
+        .innerRadius(radius - 2)
+        .outerRadius(radius + 2)
+        .startAngle(270 * (Math.PI/180))
+        .endAngle(90 * (Math.PI/180));
+
+      wave.append('path')
+        .attr('class', 'arc')
+        .attr('d', arcGen);
+
+      wave.append('path')
+        .attr('class','arc')
+        .attr('d', arcGen)
+        .attr('transform', function(){ return 'translate('+ (r * 2) +',0)rotate(180)'; });
+      
+      shiftWaves(r);
+      
+
+    };
+
