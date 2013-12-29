@@ -125,3 +125,10 @@ pre {
 
 .key { color: #CF892A; }
 
+/* waves styles */
+.waveUnit {
+  fill: black;
+  stroke: black;
+  stroke-width: 2px;
+}
+

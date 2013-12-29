@@ -10,52 +10,44 @@ block content
     hr
     #canvas
 
-  script
-    $('#clickMe').click(function(){ enterWave(30); })
 
-    var radius = 30;
+  script
+    $('#clickMe').click(function(){ enterWave(); })
 
     var canvas_x = $('#canvas').width();
     var canvas_y = $(window).height() - 250;
+    var origin = canvas_x + 100;
 
     var canvas = d3.select('#canvas').append('svg')
       .attr('height', canvas_y)
       .attr('width', canvas_x)
       .style('background-color', 'lightblue');
 
-    //- var data = [canvas_x + radius];
-    var data = [[canvas_x + radius],
-                [canvas_x + radius],
-                [canvas_x + radius],
-                [canvas_x + radius]];
+    var arcGen = d3.svg.arc()
+      .innerRadius(function(d){ return d.r - 3; })
+      .outerRadius(function(d){ return d.r + 3})
+      .startAngle(270 * (Math.PI/180))
+      .endAngle(90 * (Math.PI/180));
 
-    var data2 = [{x:canvas_x, r:30},{x:canvas_x, r:30}];
+    var data = [[{x:origin, r:30}],
+                [{x:origin, r:60}],
+                [{x:origin, r:90}]];
 
-    function enterWave(r){
 
+    function enterWave(){
       var wavesGroup = canvas.selectAll('.wavesGroup')
         .data(data)
         .enter()
         .append('g')
-        .attr('class', 'wavesGroup')
-        .attr('transform', function(d,i){ return 'translate(0,'+ (i * 30 - 50) +')'} );
+        .attr('class', 'wavesGroup');
 
       var waves = wavesGroup.selectAll('.waveUnit')
-        .data(function(d){ return(d); })
+        .data(function(d){ return d; })
         .enter();
 
       var waveUnit = waves.append('g')
         .attr('class', 'waveUnit')
-        .attr('transform', function(d){ return 'translate('+ (d) +','+ (canvas_y / 2)+')'})
-        .style('fill', 'none')
-        .style('stroke-width', 5)
-        .style('stroke', 'black');
-
-      var arcGen = d3.svg.arc()
-        .innerRadius(radius - 2)
-        .outerRadius(radius + 2)
-        .startAngle(270 * (Math.PI/180))
-        .endAngle(90 * (Math.PI/180));
+        .attr('transform', function(d){ return 'translate('+ d.x +','+ (canvas_y / 2)+')'});
 
       waveUnit.append('path')
         .attr('class', 'arc')
@@ -64,16 +56,19 @@ block content
       waveUnit.append('path')
         .attr('class','arc')
         .attr('d', arcGen)
-        .attr('transform', function(){ return 'translate('+ (r * 2) +',0)rotate(180)'; });
+        .attr('transform', function(d){ return 'translate('+ (d.r * 2) +',0)rotate(180)'; });
 
-      shiftWaves(r);
+      shiftWaves();
       };
 
 
-    function shiftWaves(r){
+    function shiftWaves(){
 
+      // subtract the width of the wave unit from d.x
       for(var i=0;i<data.length;i++){
-        data[i] = data[i].map(function(d){ return (d - r * 4); })
+        for(var j=0;j<data[i].length;j++){
+          data[i][j].x = data[i][j].x - (data[i][j].r * 4);
+        };
       };
 
       var wavesGroup = canvas.selectAll('.wavesGroup')
@@ -86,25 +81,31 @@ block content
         };
       };
 
-      var j=0;
+      var index=0;
       wavesGroup.selectAll('.waveUnit')
         .data(function(d){ return d; })
         .transition()
-        .duration(2000)
+        .duration(1000)
         .ease('linear')
-        .attr('transform', function(d){ return 'translate('+ (d) +','+ (canvas_y / 2)+')'})
+        .attr('transform', function(d){ return 'translate('+ d.x +','+ (canvas_y / 2)+')'})
         .each('end', function(d,i){
-          j++;
-          if(d[0] < 0 ){ this.remove(); d.shift();}
-          if(j==numWaves){ addWave(r); }
+          index++;
+          if(d.x < 0-d.r ){ this.remove(); removeFromArray(d,i)}
+          if(index==numWaves){ addWave(); } // called once all waves have been shifted
         })
     };
 
-    function addWave(r){
-
+    function removeFromArray(targetObj, targetIndex){
       for(var i=0;i<data.length;i++){
-        data[i].push(d3.max(data[i])+r*4);
-      };  
+        if(data[i][targetIndex] == targetObj){ data[i].splice(targetIndex,1) }
+      }
+    }
+
+
+    function addWave(){
+      for(var i=0;i<data.length;i++){
+        data[i].push({x:origin, r:data[i][0].r});
+      };
 
       var wavesGroup = canvas.selectAll('.wavesGroup')
         .data(data)
@@ -119,16 +120,7 @@ block content
 
       var wave = waves.append('g')
         .attr('class', 'waveUnit')
-        .attr('transform', function(d){ return 'translate('+ (d) +','+ (canvas_y / 2)+')'})
-        .style('fill', 'none')
-        .style('stroke-width', 5)
-        .style('stroke', 'black');
-
-      var arcGen = d3.svg.arc()
-        .innerRadius(radius - 2)
-        .outerRadius(radius + 2)
-        .startAngle(270 * (Math.PI/180))
-        .endAngle(90 * (Math.PI/180));
+        .attr('transform', function(d){ return 'translate('+ d.x +','+ (canvas_y / 2)+')'});
 
       wave.append('path')
         .attr('class', 'arc')
@@ -137,9 +129,9 @@ block content
       wave.append('path')
         .attr('class','arc')
         .attr('d', arcGen)
-        .attr('transform', function(){ return 'translate('+ (r * 2) +',0)rotate(180)'; });
+        .attr('transform', function(d){ return 'translate('+ (d.r * 2) +',0)rotate(180)'; });
       
-      shiftWaves(r);
+      shiftWaves();
       
 
     };
