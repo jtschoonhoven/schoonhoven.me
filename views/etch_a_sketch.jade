@@ -11,9 +11,8 @@ block content
     #canvas
 
   script
-    $('#clickMe').click(function(){ first(); })
+    $('#clickMe').click(function(){ enterCircles(); })
 
-    var data = [1];
     var radius = 30;
 
     var canvas_x = $('#canvas').width();
@@ -24,83 +23,96 @@ block content
       .attr('width', canvas_x)
       .style('background-color', 'lightblue');
 
-    var draw = function(data){
+    var arcGen = d3.svg.arc()
+      .innerRadius(radius - 2)
+      .outerRadius(radius + 2)
+      .startAngle(270 * (Math.PI/180))
+      .endAngle(90 * (Math.PI/180));
 
-      var g = canvas.selectAll('g')
-        .data([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17])
-        .enter()
-        .append('g')
-        .attr('transform', function(d){ return 'translate('+ d * radius * 2 +',0)'; });
 
-      var circle = g.selectAll('circle')
+    var data = [600,660];
+
+    function enterCircles(){
+      canvas.selectAll('circle')
         .data(data)
         .enter()
         .append('circle')
-        .attr('cx', -100)
-        .attr('cy', 100)
+        .attr('cx', function(d){ return d; })
+        .attr('cy', 100 )
         .attr('r', radius)
         .style('fill', 'none')
-        .style('stroke', 'black')
-        .style('stroke-width', 3);
+        .style('stroke-width', 5)
+        .style('stroke', 'black');
 
-      data = [2];
-
-      circle.data(data)
-        .transition()
-        .duration(1000)
-        .ease('linear')
-        .attr('cx', function(d){ return (radius * 2 - 100) ;})
-        .each('end', function(){ redraw([1]); });
+        shiftCircles();
       };
 
-
-    var redraw = function(data){
-
-      var g = canvas.selectAll('g')
-
-      var circle = g.selectAll('circle')
+    function shiftCircles(){
+      data = data.map(function(d){ return (d - radius * 2); })
+      var circles = canvas.selectAll('circle')
         .data(data)
-        .attr('cx', -100)
-
-        data = [2];
-
-      circle.data(data)
         .transition()
-        .duration(1000)
+        .duration(2000)
         .ease('linear')
-        .attr('cx', function(d){ return (radius * 2 - 100) ;})
-        .each('end', function(){ redraw([1]); });
-      }
+        .attr('cx', function(d){ return d; })
+        .each('end', function(d,i){
+          if(data[0] < 400 ){ this.remove(); data.shift();}
+          if(d == d3.max(data)){ console.log(data); addCircle(); }
+        })
+    };
 
-      draw([1]);
+    function addCircle(){
+      data.push(d3.max(data)+radius*2)
+      var circles = canvas.selectAll('circle')
+        .data(data)
 
-    //- var first = function(){
+      circles.exit().remove();
 
-    //-   data.unshift(d3.min(data)-1);
-    //-   //- data.pop();
+      circles.enter()
+        .append('circle')
+        .attr('cx', function(d){ return d; })
+        .attr('cy', 100 )
+        .attr('r', radius)
+        .style('fill', 'none')
+        .style('stroke-width', 5)
+        .style('stroke', 'black');
 
-    //-   var g = canvas.selectAll('g')
-    //-     .data(data);
+        shiftCircles();
+    };
 
-    //-   g.transition()
-    //-     .duration(1000)
-    //-     .attr('transform', function(d,i){ return 'translate('+ (200 + radius * d * 2) +',100)' })
-    //-     .each('end', function(){ first(); });
+    //- var data = [1];
 
-    //-   g.data(data)
-    //-     .enter()
-    //-     .append('g')
-    //-     .attr('transform', function(d,i){ return 'translate('+ (200 + radius * d * 2) +',100)' })
-    //-       .append('circle')
-    //-       .attr('r', radius)
-    //-       .style('stroke', 'black')
-    //-       .style('fill', 'none');
+    //- var waves = canvas.selectAll('.waves')
+    //-   .data(data)
+    //-   .enter()
+    //-   .append('g')
+    //-   .attr('class', 'waves');
 
-    //-   g.exit().remove();
+    //- var newWave = function(){
 
+    //-   var wave = waves.append('g')
+    //-     .attr('class', 'wave')
+    //-     .attr('transform', 'translate(600,150)');
 
-    //- }
+    //-   var arc_bt = wave.append('path')
+    //-     .attr('class', 'arc_bt')
+    //-     .attr('d', arcGen);
 
+    //-   var arc_tp = wave.append('path')
+    //-     .attr('class','arc_tp')
+    //-     .attr('d', arcGen)
+    //-     .attr('transform', function(){ return 'translate('+ ((radius * 2)) +',0)rotate(180)'; });
 
+    //-   wave.transition()
+    //-     .duration(2000)
+    //-     .ease('linear')
+    //-     .attr('transform', 'translate(100, 150)')
+    //-     .each('end', function(){ 
+    //-       this.remove(); 
+    //-       });
+    //-   };
+
+    //- console.log('called')
+    //- newWave();
   
 
