@@ -32,6 +32,7 @@ p {
 .btn,
 .btn.active, 
 .btn:hover {
+  color:#FFF;
   border: solid 1px #71B0E4;}
 
 hr {
@@ -129,6 +130,5 @@ pre {
 .waveUnit {
   fill: black;
   stroke: black;
-  stroke-width: 2px;
 }
 

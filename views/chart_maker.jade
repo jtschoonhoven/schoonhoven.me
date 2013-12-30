@@ -28,8 +28,14 @@ block content
             span.caret
           ul.dropdown-menu
 
+        #filter.btn-group.btn-group-sm
+          .btn.btn-primary.dropdown-toggle(data-toggle='dropdown') Filter &nbsp;
+            span.caret
+          ul.dropdown-menu
+
       .panel-body
         #canvas
+
 
   script
     var table = !{tableObj};
@@ -43,7 +49,7 @@ block content
     $('[data-value="' + currentType + '"]').addClass('active');
 
     draw(table[currentTable].rows, currentType);
-    addColumnsToPivotBtn();
+    addColumnsToPivotAndFilterBtns();
 
     // new chart type
     $('#chartTypes .btn').click(function(){ 
@@ -67,14 +73,16 @@ block content
 
     // pivot
     $('#pivot li').click(function(){
-      console.log('Clicked: '+ $(this).attr('data-pivot'));
-      pivotOut($(this).attr('data-pivot'));
-      })
+      draw(table[currentTable].rows, currentType, $(this).attr('data-pivot'));
+      });
 
-    function addColumnsToPivotBtn(){
+
+    function addColumnsToPivotAndFilterBtns(){
       $('#pivot ul').empty();
+      $('#filter ul').empty();
       $('th').each(function(i,d){
         $('#pivot ul').append('<li data-pivot="'+ $(this).html() +'"><a href="#">'+ $(this).html() +'</a></li>');
+        $('#filter ul').append('<li data-filter="'+ $(this).html() +'"><a href="#">'+ $(this).html() +'</a></li>');
       });
       $('th').each(function(i){
         $(this).css('textTransform', 'capitalize');

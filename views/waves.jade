@@ -4,19 +4,23 @@ block content
 
   hr
   .row
-    h2#chartTitle Etch-a-Sketch!
-    p#chartDesc Trying things out. You can always shake it.
-    #clickMe.btn.btn-link Click Me
-    hr
-    #canvas
+    h2#chartTitle Waves!
+    p#chartDesc It draws waves.
+    .panel.panel-primary
+      .panel-heading
+        span.small Options:&nbsp;
+        #start.btn.btn-link(data-play='play') Start
+      .panel-body
+        #canvas
 
 
   script
-    $('#clickMe').click(function(){ enterWave(); })
+    $('#start').click(function(){ enterWave(); });
 
     var canvas_x = $('#canvas').width();
     var canvas_y = $(window).height() - 250;
-    var origin = canvas_x + 100;
+    var origin = canvas_x + 300;
+    var paused = 0;
 
     var canvas = d3.select('#canvas').append('svg')
       .attr('height', canvas_y)
@@ -24,14 +28,18 @@ block content
       .style('background-color', 'lightblue');
 
     var arcGen = d3.svg.arc()
-      .innerRadius(function(d){ return d.r - 3; })
-      .outerRadius(function(d){ return d.r + 3})
+      .innerRadius(function(d){ return d.r - 20; })
+      .outerRadius(function(d){ return d.r + 20})
       .startAngle(270 * (Math.PI/180))
       .endAngle(90 * (Math.PI/180));
 
-    var data = [[{x:origin, r:30}],
-                [{x:origin, r:60}],
-                [{x:origin, r:90}]];
+    var data = [[{x:origin, r:120}],
+                [{x:origin, r:150}],
+                [{x:origin, r:180}],
+                [{x:origin, r:210}],
+                [{x:origin, r:240}],
+                [{x:origin, r:270}],
+                [{x:origin, r:300}]];
 
 
     function enterWave(){
@@ -85,12 +93,12 @@ block content
       wavesGroup.selectAll('.waveUnit')
         .data(function(d){ return d; })
         .transition()
-        .duration(1000)
+        .duration(5000)
         .ease('linear')
         .attr('transform', function(d){ return 'translate('+ d.x +','+ (canvas_y / 2)+')'})
         .each('end', function(d,i){
           index++;
-          if(d.x < 0-d.r ){ this.remove(); removeFromArray(d,i)}
+          if(d.x < (0 - (d.r * 4)) ){ this.remove(); removeFromArray(d,i)}
           if(index==numWaves){ addWave(); } // called once all waves have been shifted
         })
     };
@@ -131,7 +139,7 @@ block content
         .attr('d', arcGen)
         .attr('transform', function(d){ return 'translate('+ (d.r * 2) +',0)rotate(180)'; });
       
-      shiftWaves();
+      if(paused != 1){ shiftWaves(); };
       
 
     };
