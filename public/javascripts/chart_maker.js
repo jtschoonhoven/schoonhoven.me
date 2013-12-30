@@ -29,19 +29,19 @@ function draw(data, chartType, pivotOn, filterOn){
     function pivot(){
 
       var toPivot = [];
-      var extractedDataToPivot = [
-        {key:'y', value:[]}, 
-        {key:'z', value:[]},
-        {key:'zx', value:[]},
-        {key:'zy', value:[]},
-        {key:'zz', value:[]}];
+      var extractedCols = [
+        {key:'yLabel', values:[]}, 
+        {key:'zLabel', values:[]},
+        {key:'zxLabel', values:[]},
+        {key:'zyLabel', values:[]},
+        {key:'zzLabel', values:[]}];
       var extractedAxisNames = [
-        {key:'y', value:null}, 
-        {key:'z', value:null},
-        {key:'zx', value:null},
-        {key:'zy', value:null},
-        {key:'zz', value:null}];
-        
+        {key:'yAxis', value:null}, 
+        {key:'zAxis', value:null},
+        {key:'zxAxis', value:null},
+        {key:'zyAxis', value:null},
+        {key:'zzAxis', value:null}];
+
 
       getColumnsToPivot();
       function getColumnsToPivot(){
@@ -57,14 +57,25 @@ function draw(data, chartType, pivotOn, filterOn){
           for(var j=0;j<data.length;j++){
             for(var k=0;k<data[j].length;k++){
               if(data[j][k].xLabel == columns[i]){
-                extractedDataToPivot[i].value.push(data[j].splice(k,1));
+                extractedCols[i].values.push(data[j].splice(k,1));
               }
             }
           }
-          console.log('done pivoting '+columns[i]);
+          extractedAxisNames[i].value = columns[i];
+          console.log('done pivoting ' + columns[i]);
         }
-        console.log('ready for next function');
-        console.log(extractedDataToPivot);
+        applyExtractedData();
+      }
+
+      function applyExtractedData(){
+        console.log('Applying extracted rows');
+        for(var i=0;i<extractedCols.length;i++){
+          for(var j=0;j<extractedCols[i].values.length;j++){
+            for(var k=0;k<data[j].length;k++){
+              data[j][k][extractedCols[i].key] = extractedCols[i].values[j][0].value;
+            }
+          }
+        }
       }
 
     } // end pivot
