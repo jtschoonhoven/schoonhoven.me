@@ -23,45 +23,53 @@ function draw(data, chartType, pivotOn, filterOn){
   };
 
 
-  // if pivot then...
-  if(typeof pivotOn === 'string'){
 
-    // array of xLabels to pivot out
-    var toPivot = [];
-    for(var i=0;i<xLabels.length;i++){
-      if(pivotOn != xLabels[i]){ toPivot.push(xLabels[i]); }
-    };
+  if(typeof pivotOn === 'string'){ pivot() };
 
-    // pivot
-    var indexesForDeletion = [];
-    for(var i=0;i<data.length;i++){ // for each row
-      var thisRow = data[i];
-      indexesForDeletion[i] = [];
-      for(var j=0;j<data[j].length;j++){ // each item in row
-        var thisItem = data[i][j];
-        for(var k=0; k<toPivot.length;k++){ // each item to pivot
-          if(thisItem.xLabel == toPivot[k]){ // if item should be pivoted
-            indexesForDeletion[i].push(j);
-            for(var l=0;l<thisRow.length;l++){ // each item in row
-              if(     !thisRow[l].yLabel) {thisRow[l].yLabel  = thisItem.value; data.yAxis  = thisItem.xLabel } // apply xLabel as property to all other items
-              else if(!thisRow[l].zLabel) {thisRow[l].zLabel  = thisItem.value; data.zAxis  = thisItem.xLabel }
-              else if(!thisRow[l].zxLabel){thisRow[l].zxLabel = thisItem.value; data.zxAxis = thisItem.xLabel }
-              else if(!thisRow[l].zyLabel){thisRow[l].zyLabel = thisItem.value; data.zyAxis = thisItem.xLabel }
-              else if(!thisRow[l].zzLabel){thisRow[l].zzLabel = thisItem.value; data.zzAxis = thisItem.xLabel }
-              else console.log('No more axes available');
+    function pivot(){
+
+      var toPivot = [];
+      var extractedDataToPivot = [
+        {key:'y', value:[]}, 
+        {key:'z', value:[]},
+        {key:'zx', value:[]},
+        {key:'zy', value:[]},
+        {key:'zz', value:[]}];
+      var extractedAxisNames = [
+        {key:'y', value:null}, 
+        {key:'z', value:null},
+        {key:'zx', value:null},
+        {key:'zy', value:null},
+        {key:'zz', value:null}];
+        
+
+      getColumnsToPivot();
+      function getColumnsToPivot(){
+        for(var i=0;i<xLabels.length;i++){
+          if(pivotOn != xLabels[i]){ toPivot.push(xLabels[i]); }
+        };
+        extractDataToPivot(toPivot);
+      };
+
+      function extractDataToPivot(columns){
+        for(var i=0;i<columns.length;i++){
+          console.log('pivoting '+columns[i]);
+          for(var j=0;j<data.length;j++){
+            for(var k=0;k<data[j].length;k++){
+              if(data[j][k].xLabel == columns[i]){
+                extractedDataToPivot[i].value.push(data[j].splice(k,1));
+              }
             }
           }
+          console.log('done pivoting '+columns[i]);
         }
+        console.log('ready for next function');
+        console.log(extractedDataToPivot);
       }
-    }
-    console.log(data);
-    console.log(indexesForDeletion);
-    for(var i=0;i<indexesForDeletion.length;i++){
-      for(var j=0;j<indexesForDeletion[i].length;j++){
-        data[i].splice(indexesForDeletion[i][j],1)
-      }
-    }
-  }; // end ifpivot
+
+    } // end pivot
+
+
 
 
   var canvas_x = $('#canvas').width();
