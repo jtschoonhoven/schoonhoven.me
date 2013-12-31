@@ -3,30 +3,59 @@
 function draw(data, chartType, pivotOn, filterOn){
 
 
-  // break ref to parent obj and empty canvas
+  // describe data
   var data = JSON.parse(JSON.stringify(data));
-  $('#canvas').empty();
+  var values   = []
+  var xLabels  = [];
+  var yLabels  = [];
+  var zLabels  = [];
+  var zxLabels = [];
+  var zyLabels = [];
+  var zzLabels = [];
 
 
-  var values = [];
-  for(var i=0; i<data.length; i++){
-    values[i] = [];
-    for(var j=0; j<data[i].length; j++){
-      values[i].push(data[i][j].value);
-    };
+  // describe d3 canvas
+  var margin  = {};
+  var canvas_x = null;
+  var canvas_y = null;
+  var max      = null;
+  var min      = null;
+  var scale_x  = null;
+  var scale_y  = null;
+
+
+  start(); 
+
+
+  function start(data){
+    $('#canvas').empty();
+    makeValuesArray();
   };
 
 
-  var xLabels = [];
-  for(var i=0; i<data[0].length; i++){ 
-    if(typeof data[0][i] != 'undefined'){ xLabels.push(data[0][i].xLabel) };
+  function makeValuesArray(){
+    for(var i=0; i<data.length; i++){
+      values[i] = [];
+      for(var j=0; j<data[i].length; j++){
+        values[i].push(data[i][j].value);
+      }
+    }
+    makeXLabelsArray();
   };
 
 
+  function makeXLabelsArray(){
+    for(var i=0; i<data[0].length; i++){ 
+      if(typeof data[0][i] != 'undefined'){ 
+        xLabels.push(data[0][i].xLabel) 
+      }
+    }
+    pivot();
+  };
 
-  if(typeof pivotOn === 'string'){ pivot() };
 
-    function pivot(){
+  function pivot(){
+    if(pivotOn || chartType === 'line'){
 
       var toPivot = [];
       var extractedCols = [
@@ -44,12 +73,15 @@ function draw(data, chartType, pivotOn, filterOn){
 
 
       getColumnsToPivot();
+
+
       function getColumnsToPivot(){
         for(var i=0;i<xLabels.length;i++){
           if(pivotOn != xLabels[i]){ toPivot.push(xLabels[i]); }
-        };
+        }
         extractDataToPivot(toPivot);
       };
+
 
       function extractDataToPivot(columns){
         for(var i=0;i<columns.length;i++){
@@ -65,7 +97,8 @@ function draw(data, chartType, pivotOn, filterOn){
           console.log('done pivoting ' + columns[i]);
         }
         applyExtractedData();
-      }
+      };
+
 
       function applyExtractedData(){
         console.log('Applying extracted rows');
@@ -77,271 +110,349 @@ function draw(data, chartType, pivotOn, filterOn){
           }
         }
       }
+    } // end if
+    makeYLabelsArray();
+  }; // end pivot
 
-    } // end pivot
+
+  function makeYLabelsArray(){
+    if(data[0][0].yLabel){
+      console.log('Filling yLabels array');
+      for(var i=0;i<data.length;i++){
+        for(var j=0;j<data[i].length;j++){
+          yLabels.push(data[i][j].yLabel);
+        }
+      }
+    }
+    makeZLabelsArray();
+  };
 
 
+  function makeZLabelsArray(){
+    if(data[0][0].zLabel){
+      console.log('Filling zLabels array');
+      for(var i=0;i<data.length;i++){
+        for(var j=0;j<data[i].length;j++){
+          zLabels.push(data[i][j].zLabel);
+        }
+      }
+    }
+    makeZXLabelsArray();
+  };
 
 
-  var canvas_x = $('#canvas').width();
-  var canvas_y = $(window).height() - 250;
-  var margin_top = 20;
-  var margin_right = 40;
-  var margin_bottom = 30;
-  var margin_left = 100;
-  var max = d3.max(d3.max(values));
-  var min = d3.min(d3.min(values));
+  function makeZXLabelsArray(){
+    if(data[0][0].zxLabel){
+      console.log('Filling zxLabels array');
+      for(var i=0;i<data.length;i++){
+        for(var j=0;j<data[i].length;j++){
+          zxLabels.push(data[i][j].zxLabel);
+        }
+      }
+    }
+    makeZYLabelsArray();
+  };
 
-  var scale_x = d3.scale.linear()
-    .domain([0, data[0].length - 1])
-    .range([margin_left, canvas_x - margin_right]);
 
-  var scale_y = d3.scale.linear()
-    .domain([max, 0])
-    .range([margin_top, canvas_y - margin_bottom]);
+  function makeZYLabelsArray(){
+    if(data[0][0].zyLabel){
+      console.log('Filling zyLabels array');
+      for(var i=0;i<data.length;i++){
+        for(var j=0;j<data[i].length;j++){
+          zyLabels.push(data[i][j].zyLabel);
+        }
+      }
+    }
+    makeZZLabelsArray();
+  };
 
-  switch(chartType){
 
-    case 'json':
+  function makeZZLabelsArray(){
+    if(data[0][0].zzLabel){
+      console.log('Filling zzLabels array');
+      for(var i=0;i<data.length;i++){
+        for(var j=0;j<data[i].length;j++){
+          zzLabels.push(data[i][j].zzLabel);
+        }
+      }
+    }
+    setD3CanvasVariables();
+  };
 
+  function setD3CanvasVariables(){
+    canvas_x      = $('#canvas').width();
+    canvas_y      = $(window).height() - 250;
+    margin.top    = 20;
+    margin.right  = 40;
+    margin.bottom = 30;
+    margin.left   = 100;
+    max = d3.max(d3.max(values));
+    min = d3.min(d3.min(values));
+
+    scale_x = d3.scale.linear()
+      .domain([0, data[0].length - 1])
+      .range([margin.left, canvas_x - margin.right]);
+
+    scale_x = d3.scale.linear()
+      .domain([0, data[0].length - 1])
+      .range([margin.left, canvas_x - margin.right]);
+
+    renderChartType();
+  };
+
+
+  function renderChartType(){
+    console.log('called ' + chartType);
+    switch(chartType){
+
+      case 'json':  
+        renderJSON();   
+        break;
+
+      case 'table': 
+        renderTable();  
+        break;
+
+      case 'area':                  
+      case 'line':  
+        renderLine();   
+        break;
+    }
+  };
+
+
+  function renderJSON(){
     function syntaxHighlight(json) { // thanks to Pumbaa80: http://stackoverflow.com/questions/4810841/json-pretty-print-using-javascript
       json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
           var cls = 'number';
           if (/^"/.test(match)) {
-              if (/:$/.test(match)) {
-                  cls = 'key';
-              } else {
-                  cls = 'string';
-              }
-          } else if (/true|false/.test(match)) {
-              cls = 'boolean';
-          } else if (/null/.test(match)) {
-              cls = 'null';
-          }
+              if (/:$/.test(match)) { cls = 'key'; } 
+              else { cls = 'string'; }
+          } 
+          else if (/true|false/.test(match)) { cls = 'boolean'; } 
+          else if (/null/.test(match)) { cls = 'null'; }
           return '<span class="' + cls + '">' + match + '</span>';
-      });
+      })
+    }
+    $('#canvas').append('<pre>'+syntaxHighlight('{'+JSON.stringify(data)+'}')+'</pre>');
+  };
+
+
+  function renderTable(){
+    // add back y & z labels as values in data obj
+    if(typeof yLabels != 'undefined' && yLabels.length > 0){
+      for(var i=0; i<data.length; i++){
+        var d = {};
+        d.name =  'yLabel';
+        d.value = yLabels[i];
+        d.yLabel = yLabels[i];
+        d.xLabel = 'y-axis';
+        data[i].unshift(d);
+      };
+    };
+    if(typeof zLabels != 'undefined' && zLabels.length > 0){
+      for(var i=0; i<data.length; i++){
+        var d = {};
+        d.name =  'zLabel';
+        d.value = zLabels[i];
+        d.yLabel = zLabels[i];
+        d.xLabel = 'z-axis';
+        data[i].unshift(d);
+      };
+    };
+    if(typeof zxLabels != 'undefined' && zxLabels.length > 0){
+      for(var i=0; i<data.length; i++){
+        var d = {};
+        d.name =  'zxLabel';
+        d.value = zxLabels[i];
+        d.yLabel = zxLabels[i];
+        d.xLabel = 'zx-axis';
+        data[i].unshift(d);
+      };
+    };
+    if(typeof zyLabels != 'undefined' && zyLabels.length > 0){
+      for(var i=0; i<data.length; i++){
+        var d = {};
+        d.name =  'zyLabel';
+        d.value = zyLabels[i];
+        d.yLabel = zyLabels[i];
+        d.xLabel = 'zy-axis';
+        data[i].unshift(d);
+      };
+    };
+    if(typeof zzLabels != 'undefined' && zzLabels.length > 0){
+      for(var i=0; i<data.length; i++){
+        var d = {};
+        d.name =  'zzLabel';
+        d.value = zzLabels[i];
+        d.yLabel = zzLabels[i];
+        d.xLabel = 'zz-axis';
+        data[i].unshift(d);
+      };
+    };
+    if(xLabels.length > 0){
+      var header = [];
+      for(var i=0; i<data[0].length; i++){
+        var d = {};
+        d.name = data[0][i].name;
+        d.value = data[0][i].xLabel
+        d.yLabel = data[0][i].name;
+        d.xLabel = data[0][i].xLabel;
+        header.push(d);
+      };
+      data.unshift(header);
     };
 
-    $('#canvas').append('<pre>'+syntaxHighlight('{'+JSON.stringify(data)+'}')+'</pre>');
+    // draw table
+    var canvas = d3.select('#canvas')
+      .append('table')
+      .attr('class', 'table table-hover table-condensed table-responsive');
 
-    break; //json
+    var thead = d3.select('table')
+      .append('thead')
+      .append('tr')
 
-      case 'table':
+    var th = thead.selectAll('th')
+      .data(data.shift())
+      .enter()
+      .append('th')
+      .attr()
+      .attr('data-value', function(d)    { return d.value; })
+      .attr('data-name',  function(d)    { return d.name; })
+      .attr('data-row',   function(d)    { return 'header'; })
+      .attr('data-col',   function(d)    { return d.xLabel; })
+      .attr('data-x-co',  function(d,i,j){ return j; })
+      .attr('data-y-co',  function(d,i)  { return i; })
+      .text(function(d){ return d.value; });
 
-        // add back y & z labels as values in data obj
-        if(typeof yLabels != 'undefined' && yLabels.length > 0){
-          for(var i=0; i<data.length; i++){
-            var d = {};
-            d.name =  'yLabel';
-            d.value = yLabels[i];
-            d.yLabel = yLabels[i];
-            d.xLabel = 'y-axis';
-            data[i].unshift(d);
-          };
-        };
-        if(typeof zLabels != 'undefined' && zLabels.length > 0){
-          for(var i=0; i<data.length; i++){
-            var d = {};
-            d.name =  'zLabel';
-            d.value = zLabels[i];
-            d.yLabel = zLabels[i];
-            d.xLabel = 'z-axis';
-            data[i].unshift(d);
-          };
-        };
-        if(typeof zxLabels != 'undefined' && zxLabels.length > 0){
-          for(var i=0; i<data.length; i++){
-            var d = {};
-            d.name =  'zxLabel';
-            d.value = zxLabels[i];
-            d.yLabel = zxLabels[i];
-            d.xLabel = 'zx-axis';
-            data[i].unshift(d);
-          };
-        };
-        if(typeof zyLabels != 'undefined' && zyLabels.length > 0){
-          for(var i=0; i<data.length; i++){
-            var d = {};
-            d.name =  'zyLabel';
-            d.value = zyLabels[i];
-            d.yLabel = zyLabels[i];
-            d.xLabel = 'zy-axis';
-            data[i].unshift(d);
-          };
-        };
-        if(typeof zzLabels != 'undefined' && zzLabels.length > 0){
-          for(var i=0; i<data.length; i++){
-            var d = {};
-            d.name =  'zzLabel';
-            d.value = zzLabels[i];
-            d.yLabel = zzLabels[i];
-            d.xLabel = 'zz-axis';
-            data[i].unshift(d);
-          };
-        };
-        if(xLabels.length > 0){
-          var header = [];
-          for(var i=0; i<data[0].length; i++){
-            var d = {};
-            d.name = data[0][i].name;
-            d.value = data[0][i].xLabel
-            d.yLabel = data[0][i].name;
-            d.xLabel = data[0][i].xLabel;
-            header.push(d);
-          };
-          data.unshift(header);
-        };
+    var tbody = d3.select('table')
+      .append('tbody');
+    
+    var tr = tbody.selectAll('tr')
+      .data(data)
+      .enter()
+      .append('tr');
 
-        // draw table
-        var canvas = d3.select('#canvas')
-          .append('table')
-          .attr('class', 'table table-hover table-condensed table-responsive');
+    var td = tr.selectAll('td')
+      .data(function(d){ return d; })
+      .enter()
+      .append('td')
+      .attr('data-value',function(d)    { return d.value; })
+      .attr('data-name', function(d)    { return d.name; })
+      .attr('data-row',  function(d)    { return d.yLabel; })
+      .attr('data-col',  function(d)    { return d.xLabel; })
+      .attr('data-x-co', function(d,i,j){ return j; })
+      .attr('data-y-co', function(d,i)  { return i; })
+      .text(function(d){ return d.value; });
+  }
 
-        var thead = d3.select('table')
-          .append('thead')
-          .append('tr')
+  function renderLine(){
 
-        var th = thead.selectAll('th')
-          .data(data.shift())
-          .enter()
-          .append('th')
-          .attr()
-          .attr('data-value', function(d)    { return d.value; })
-          .attr('data-name',  function(d)    { return d.name; })
-          .attr('data-row',   function(d)    { return 'header'; })
-          .attr('data-col',   function(d)    { return d.xLabel; })
-          .attr('data-x-co',  function(d,i,j){ return j; })
-          .attr('data-y-co',  function(d,i)  { return i; })
-          .text(function(d){ return d.value; });
+    var canvas = d3.select('#canvas')
+      .append('svg')
+      .attr('width', canvas_x)
+      .attr('height', canvas_y);
 
-        var tbody = d3.select('table')
-          .append('tbody');
-        
-        var tr = tbody.selectAll('tr')
-          .data(data)
-          .enter()
-          .append('tr');
+    var group = canvas.selectAll('.group')
+      .data(data)
+      .enter()
+      .append('g')
+      .attr('class', 'group');
 
-        var td = tr.selectAll('td')
-          .data(function(d){ return d; })
-          .enter()
-          .append('td')
-          .attr('data-value',function(d)    { return d.value; })
-          .attr('data-name', function(d)    { return d.name; })
-          .attr('data-row',  function(d)    { return d.yLabel; })
-          .attr('data-col',  function(d)    { return d.xLabel; })
-          .attr('data-x-co', function(d,i,j){ return j; })
-          .attr('data-y-co', function(d,i)  { return i; })
-          .text(function(d){ return d.value; });
-
-      break; // table
-
-      case 'area':
-      case 'line':
-
-      var canvas = d3.select('#canvas')
-        .append('svg')
-        .attr('width', canvas_x)
-        .attr('height', canvas_y);
-
-      var group = canvas.selectAll('.group')
-        .data(data)
-        .enter()
-        .append('g')
-        .attr('class', 'group');
-
-      if(chartType == 'area'){
-        var pathGen = d3.svg.area()
-          .x(function(d,i){ return scale_x(i); })
-          .y0(function(){ return (canvas_y - margin_bottom); })
-          .y1(function(d){ return scale_y(d.value); })
-          .interpolate('cardinal');
-
-        var path = group.selectAll('.fill')
-          .data(data)
-          .enter()
-          .append('path')
-          .attr('d', pathGen)
-          .attr('class', 'fill')
-          .attr('fill', '#43B386')
-      };
-
-      var lineGen = d3.svg.line()
+    if(chartType == 'area'){
+      var pathGen = d3.svg.area()
         .x(function(d,i){ return scale_x(i); })
-        .y(function(d){ return scale_y(d.value); })
+        .y0(function(){ return (canvas_y - margin.bottom); })
+        .y1(function(d){ return scale_y(d.value); })
         .interpolate('cardinal');
 
-      var line = group.selectAll('.lines')
+      var path = group.selectAll('.fill')
         .data(data)
         .enter()
         .append('path')
-        .attr('class', 'lines')
-        .attr('d', lineGen)
-        .attr('stroke-width', 2)
-        .attr('stroke', '#276ba4');
+        .attr('d', pathGen)
+        .attr('class', 'fill')
+        .attr('fill', '#43B386')
+    };
 
-      var circles = group.selectAll('circle')
-        .data(function(d){ return d; })
-        .enter()
-        .append('circle')
-        .attr('cx', function(d,i,j){ return scale_x(i); })
-        .attr('cy', function(d){ return scale_y(d.value); })
-        .attr('r', 4)
-        .style('fill', '#155183');
+    var lineGen = d3.svg.line()
+      .x(function(d,i){ return scale_x(i); })
+      .y(function(d){ return scale_y(d.value); })
+      .interpolate('cardinal');
 
-      var ordinalScale = d3.scale.ordinal()
-        .domain( function(){ 
-          var domain = [];
-          var n = data[0].length;
-          for(var i=0; i<n; i++){
-            domain.push(data[0][i].name)
-          }
-          return domain;
-        })
-        .range( );
+    var line = group.selectAll('.lines')
+      .data(data)
+      .enter()
+      .append('path')
+      .attr('class', 'lines')
+      .attr('d', lineGen)
+      .attr('stroke-width', 2)
+      .attr('stroke', '#276ba4');
 
-      var domain_x = function(){ 
-          var d = [];
-          var n = data[0].length;
-          for(var i=0; i<n; i++){ d.push(data[0][i].xLabel); };
-          return d;
+    var circles = group.selectAll('circle')
+      .data(function(d){ return d; })
+      .enter()
+      .append('circle')
+      .attr('cx', function(d,i,j){ return scale_x(i); })
+      .attr('cy', function(d){ return scale_y(d.value); })
+      .attr('r', 4)
+      .style('fill', '#155183');
+
+    var ordinalScale = d3.scale.ordinal()
+      .domain( function(){ 
+        var domain = [];
+        var n = data[0].length;
+        for(var i=0; i<n; i++){
+          domain.push(data[0][i].name)
+        }
+        return domain;
+      })
+      .range( );
+
+    var domain_x = function(){ 
+        var d = [];
+        var n = data[0].length;
+        for(var i=0; i<n; i++){ d.push(data[0][i].xLabel); };
+        return d;
+      };
+
+    var range_x = function(){
+        var r = [];
+        var n = data[0].length;
+        for(var i=0; i<data[0].length; i++){ 
+          r.push(margin.left + ((canvas_x-(margin.left + margin.right))/(n-1))*i); 
         };
+        return r;
+      };
 
-      var range_x = function(){
-          var r = [];
-          var n = data[0].length;
-          for(var i=0; i<data[0].length; i++){ 
-            r.push(margin_left+((canvas_x-(margin_left+margin_right))/(n-1))*i); 
-          };
-          return r;
-        };
+    var xAxisGen = d3.svg.axis()
+      .scale(d3.scale.ordinal().domain(domain_x()).range(range_x()))
+      .orient('bottom')
+      // .tickFormat(d3.format('')); // integers, or '.1%' // for %'s'
 
-      var xAxisGen = d3.svg.axis()
-        .scale(d3.scale.ordinal().domain(domain_x()).range(range_x()))
-        .orient('bottom')
-        // .tickFormat(d3.format('')); // integers, or '.1%' // for %'s'
+    var xAxis = canvas.append('g')
+    .attr('transform', 'translate(0,' + (canvas_y - margin.bottom * .9) + ')')
+      .attr('class', 'x axis')
+      .call(xAxisGen);
 
-      var xAxis = canvas.append('g')
-      .attr('transform', 'translate(0,' + (canvas_y - margin_bottom * .9) + ')')
-        .attr('class', 'x axis')
-        .call(xAxisGen);
+    var yAxisGen = d3.svg.axis()
+      .scale(scale_y)
+      .orient('left')
+      .ticks(5);
 
-      var yAxisGen = d3.svg.axis()
-        .scale(scale_y)
-        .orient('left')
-        .ticks(5);
+    var yAxis = canvas.append('g')
+      .attr('class', 'y axis')
+      .attr('transform', 'translate('+ (margin.left) + ', 0)')
+      .call(yAxisGen);
+  }; // end renderLine()
 
-      var yAxis = canvas.append('g')
-        .attr('class', 'y axis')
-        .attr('transform', 'translate('+ (margin_left) + ', 0)')
-        .call(yAxisGen);
-
-      break;
+}; // end draw()
 
 
 
-  }; // end switch
+
+
 //       $(window).resize(function(){
 
 //         canvas_x = $('#content').width();
@@ -421,5 +532,3 @@ function draw(data, chartType, pivotOn, filterOn){
 //       });
 
 //     break;
-
-};
