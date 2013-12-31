@@ -23,15 +23,12 @@ function draw(data, chartType, pivotOn, filterOn){
   var scale_x  = null;
   var scale_y  = null;
 
-
   start(); 
-
 
   function start(data){
     $('#canvas').empty();
     makeValuesArray();
   };
-
 
   function makeValuesArray(){
     for(var i=0; i<data.length; i++){
@@ -43,7 +40,6 @@ function draw(data, chartType, pivotOn, filterOn){
     makeXLabelsArray();
   };
 
-
   function makeXLabelsArray(){
     for(var i=0; i<data[0].length; i++){ 
       if(typeof data[0][i] != 'undefined'){ 
@@ -52,7 +48,6 @@ function draw(data, chartType, pivotOn, filterOn){
     }
     pivot();
   };
-
 
   function pivot(){
     if(pivotOn || chartType === 'line'){
@@ -71,9 +66,7 @@ function draw(data, chartType, pivotOn, filterOn){
         {key:'zyAxis', value:null},
         {key:'zzAxis', value:null}];
 
-
       getColumnsToPivot();
-
 
       function getColumnsToPivot(){
         for(var i=0;i<xLabels.length;i++){
@@ -81,7 +74,6 @@ function draw(data, chartType, pivotOn, filterOn){
         }
         extractDataToPivot(toPivot);
       };
-
 
       function extractDataToPivot(columns){
         for(var i=0;i<columns.length;i++){
@@ -99,7 +91,6 @@ function draw(data, chartType, pivotOn, filterOn){
         applyExtractedData();
       };
 
-
       function applyExtractedData(){
         console.log('Applying extracted rows');
         for(var i=0;i<extractedCols.length;i++){
@@ -114,7 +105,6 @@ function draw(data, chartType, pivotOn, filterOn){
     makeYLabelsArray();
   }; // end pivot
 
-
   function makeYLabelsArray(){
     if(data[0][0].yLabel){
       console.log('Filling yLabels array');
@@ -126,7 +116,6 @@ function draw(data, chartType, pivotOn, filterOn){
     }
     makeZLabelsArray();
   };
-
 
   function makeZLabelsArray(){
     if(data[0][0].zLabel){
@@ -140,7 +129,6 @@ function draw(data, chartType, pivotOn, filterOn){
     makeZXLabelsArray();
   };
 
-
   function makeZXLabelsArray(){
     if(data[0][0].zxLabel){
       console.log('Filling zxLabels array');
@@ -152,7 +140,6 @@ function draw(data, chartType, pivotOn, filterOn){
     }
     makeZYLabelsArray();
   };
-
 
   function makeZYLabelsArray(){
     if(data[0][0].zyLabel){
@@ -166,7 +153,6 @@ function draw(data, chartType, pivotOn, filterOn){
     makeZZLabelsArray();
   };
 
-
   function makeZZLabelsArray(){
     if(data[0][0].zzLabel){
       console.log('Filling zzLabels array');
@@ -178,7 +164,6 @@ function draw(data, chartType, pivotOn, filterOn){
     }
     setD3CanvasVariables();
   };
-
 
   function setD3CanvasVariables(){
     canvas_x      = $('#canvas').width();
@@ -203,7 +188,6 @@ function draw(data, chartType, pivotOn, filterOn){
 
 
   function renderChartType(){
-    console.log('called ' + chartType);
     switch(chartType){
 
       case 'json':  
@@ -246,16 +230,68 @@ function draw(data, chartType, pivotOn, filterOn){
     // zx,zy,zzLabels not yet supported
 
     var tableHeader = [];
+    var referenceMatrix = [];
+    var tableMatrix = [];
 
     extractYLabels();
 
     function extractYLabels(){
+      for(var i=0;i<data.length;i++){
+        if(data[i][0].yLabel){
+          yLabels.push(data[i][0].yLabel);
+        }
+      }
+      yLabels = unique(yLabels);
       extractZLabels();
     };
 
     function extractZLabels(){
+      for(var i=0;i<data.length;i++){
+        if(data[i][0].zLabel){
+          zLabels.push(data[i][0].zLabel);
+        }
+      }
+      zLabels = unique(zLabels);
       getTableHeader();
+      makeReferenceMatrix();
     };
+
+    function makeReferenceMatrix(){ 
+      for(var i=0;i<yLabels.length;i++){
+        referenceMatrix[i] = [];
+        for(var j=0;j<zLabels.length;j++){
+          referenceMatrix[i][j] = {yLabel:yLabels[i], zLabel:zLabels[j]};
+        }
+      }
+      makeTableMatrix();
+      console.log(referenceMatrix);
+    };
+
+
+    function makeTableMatrix(){
+      for(var i=0;i<referenceMatrix.length;i++){
+        tableMatrix[i] = [];
+        for(var j=0;j<referenceMatrix[j].length;j++){
+          var lookupObj = {yLabel: referenceMatrix[i][j].yLabel, zLabel: referenceMatrix[i][j].zLabel}
+          lookup(lookupObj, function(result){
+            tableMatrix[i][j] = result;
+          });
+        }
+      }
+      console.log(tableMatrix);
+      data = tableMatrix; // still needs to have axes extracted to columns/rows
+    };
+
+    function lookup(lookup, done){
+      for(var i=0;i<data.length;i++){
+        for(var j=0;j<data[i].length;j++){
+          if(data[i][j].yLabel == lookup.yLabel && data[i][j].zLabel == lookup.zLabel){
+            done(data[i][j]);
+            break;
+          }
+        }
+      }
+    }
 
     function getTableHeader(){
       for(var i=0; i<data[0].length; i++){
@@ -278,7 +314,7 @@ function draw(data, chartType, pivotOn, filterOn){
 
       var thead = d3.select('table')
         .append('thead')
-        .append('tr')
+        .append('tr');
 
       var th = thead.selectAll('th')
         .data(data.shift())
@@ -416,6 +452,13 @@ function draw(data, chartType, pivotOn, filterOn){
       .attr('transform', 'translate('+ (margin.left) + ', 0)')
       .call(yAxisGen);
   }; // end renderLine()
+
+  function unique(array) {
+     return $.grep(array, function(el, index) {
+         return index == $.inArray(el, array);
+     })
+   };
+
 
 }; // end draw()
 
