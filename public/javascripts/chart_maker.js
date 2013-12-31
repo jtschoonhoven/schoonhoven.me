@@ -179,6 +179,7 @@ function draw(data, chartType, pivotOn, filterOn){
     setD3CanvasVariables();
   };
 
+
   function setD3CanvasVariables(){
     canvas_x      = $('#canvas').width();
     canvas_y      = $(window).height() - 250;
@@ -240,112 +241,81 @@ function draw(data, chartType, pivotOn, filterOn){
 
 
   function renderTable(){
-    // add back y & z labels as values in data obj
-    if(typeof yLabels != 'undefined' && yLabels.length > 0){
-      for(var i=0; i<data.length; i++){
-        var d = {};
-        d.name =  'yLabel';
-        d.value = yLabels[i];
-        d.yLabel = yLabels[i];
-        d.xLabel = 'y-axis';
-        data[i].unshift(d);
-      };
+    // yLabels remain vertical
+    // zLabels are pivoted horizontally
+    // zx,zy,zzLabels not yet supported
+
+    var tableHeader = [];
+
+    extractYLabels();
+
+    function extractYLabels(){
+      extractZLabels();
     };
-    if(typeof zLabels != 'undefined' && zLabels.length > 0){
-      for(var i=0; i<data.length; i++){
-        var d = {};
-        d.name =  'zLabel';
-        d.value = zLabels[i];
-        d.yLabel = zLabels[i];
-        d.xLabel = 'z-axis';
-        data[i].unshift(d);
-      };
+
+    function extractZLabels(){
+      getTableHeader();
     };
-    if(typeof zxLabels != 'undefined' && zxLabels.length > 0){
-      for(var i=0; i<data.length; i++){
-        var d = {};
-        d.name =  'zxLabel';
-        d.value = zxLabels[i];
-        d.yLabel = zxLabels[i];
-        d.xLabel = 'zx-axis';
-        data[i].unshift(d);
-      };
-    };
-    if(typeof zyLabels != 'undefined' && zyLabels.length > 0){
-      for(var i=0; i<data.length; i++){
-        var d = {};
-        d.name =  'zyLabel';
-        d.value = zyLabels[i];
-        d.yLabel = zyLabels[i];
-        d.xLabel = 'zy-axis';
-        data[i].unshift(d);
-      };
-    };
-    if(typeof zzLabels != 'undefined' && zzLabels.length > 0){
-      for(var i=0; i<data.length; i++){
-        var d = {};
-        d.name =  'zzLabel';
-        d.value = zzLabels[i];
-        d.yLabel = zzLabels[i];
-        d.xLabel = 'zz-axis';
-        data[i].unshift(d);
-      };
-    };
-    if(xLabels.length > 0){
-      var header = [];
+
+    function getTableHeader(){
       for(var i=0; i<data[0].length; i++){
         var d = {};
         d.name = data[0][i].name;
         d.value = data[0][i].xLabel
         d.yLabel = data[0][i].name;
         d.xLabel = data[0][i].xLabel;
-        header.push(d);
-      };
-      data.unshift(header);
+        tableHeader.push(d);
+      }
+      data.unshift(tableHeader);
+      makeTable();
     };
 
-    // draw table
-    var canvas = d3.select('#canvas')
-      .append('table')
-      .attr('class', 'table table-hover table-condensed table-responsive');
+    function makeTable(){
 
-    var thead = d3.select('table')
-      .append('thead')
-      .append('tr')
+      var canvas = d3.select('#canvas')
+        .append('table')
+        .attr('class', 'table table-hover table-condensed table-responsive');
 
-    var th = thead.selectAll('th')
-      .data(data.shift())
-      .enter()
-      .append('th')
-      .attr()
-      .attr('data-value', function(d)    { return d.value; })
-      .attr('data-name',  function(d)    { return d.name; })
-      .attr('data-row',   function(d)    { return 'header'; })
-      .attr('data-col',   function(d)    { return d.xLabel; })
-      .attr('data-x-co',  function(d,i,j){ return j; })
-      .attr('data-y-co',  function(d,i)  { return i; })
-      .text(function(d){ return d.value; });
+      var thead = d3.select('table')
+        .append('thead')
+        .append('tr')
 
-    var tbody = d3.select('table')
-      .append('tbody');
-    
-    var tr = tbody.selectAll('tr')
-      .data(data)
-      .enter()
-      .append('tr');
+      var th = thead.selectAll('th')
+        .data(data.shift())
+        .enter()
+        .append('th')
+        .attr()
+        .attr('data-value', function(d)    { return d.value; })
+        .attr('data-name',  function(d)    { return d.name; })
+        .attr('data-row',   function(d)    { return 'tableHeader'; })
+        .attr('data-col',   function(d)    { return d.xLabel; })
+        .attr('data-x-co',  function(d,i,j){ return j; })
+        .attr('data-y-co',  function(d,i)  { return i; })
+        .text(function(d){ return d.value; });
 
-    var td = tr.selectAll('td')
-      .data(function(d){ return d; })
-      .enter()
-      .append('td')
-      .attr('data-value',function(d)    { return d.value; })
-      .attr('data-name', function(d)    { return d.name; })
-      .attr('data-row',  function(d)    { return d.yLabel; })
-      .attr('data-col',  function(d)    { return d.xLabel; })
-      .attr('data-x-co', function(d,i,j){ return j; })
-      .attr('data-y-co', function(d,i)  { return i; })
-      .text(function(d){ return d.value; });
-  }
+      var tbody = d3.select('table')
+        .append('tbody');
+      
+      var tr = tbody.selectAll('tr')
+        .data(data)
+        .enter()
+        .append('tr');
+
+      var td = tr.selectAll('td')
+        .data(function(d){ return d; })
+        .enter()
+        .append('td')
+        .attr('data-value',function(d)    { return d.value; })
+        .attr('data-name', function(d)    { return d.name; })
+        .attr('data-row',  function(d)    { return d.yLabel; })
+        .attr('data-col',  function(d)    { return d.xLabel; })
+        .attr('data-x-co', function(d,i,j){ return j; })
+        .attr('data-y-co', function(d,i)  { return i; })
+        .text(function(d){ return d.value; });
+    };
+
+  }; // end table
+
 
   function renderLine(){
 
