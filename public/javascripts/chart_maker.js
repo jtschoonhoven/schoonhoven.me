@@ -252,7 +252,6 @@ function draw(data, chartType, pivotOn, filterOn){
         }
       }
       zLabels = unique(zLabels);
-      getTableHeader();
       makeReferenceMatrix();
     };
 
@@ -264,14 +263,13 @@ function draw(data, chartType, pivotOn, filterOn){
         }
       }
       makeTableMatrix();
-      console.log(referenceMatrix);
     };
 
 
     function makeTableMatrix(){
       for(var i=0;i<referenceMatrix.length;i++){
         tableMatrix[i] = [];
-        for(var j=0;j<referenceMatrix[j].length;j++){
+        for(var j=0;j<referenceMatrix[i].length;j++){
           var lookupObj = {yLabel: referenceMatrix[i][j].yLabel, zLabel: referenceMatrix[i][j].zLabel}
           lookup(lookupObj, function(result){
             tableMatrix[i][j] = result;
@@ -279,26 +277,29 @@ function draw(data, chartType, pivotOn, filterOn){
         }
       }
       console.log(tableMatrix);
-      data = tableMatrix; // still needs to have axes extracted to columns/rows
+      if(pivotOn){ data = tableMatrix; }
+      getTableHeader();
     };
 
     function lookup(lookup, done){
+      var found = 0;
       for(var i=0;i<data.length;i++){
         for(var j=0;j<data[i].length;j++){
           if(data[i][j].yLabel == lookup.yLabel && data[i][j].zLabel == lookup.zLabel){
             done(data[i][j]);
+            found = 1;
             break;
           }
         }
       }
+      if(found==0){ done(null); }
     }
 
     function getTableHeader(){
+      console.log(data);
       for(var i=0; i<data[0].length; i++){
         var d = {};
-        d.name = data[0][i].name;
         d.value = data[0][i].xLabel
-        d.yLabel = data[0][i].name;
         d.xLabel = data[0][i].xLabel;
         tableHeader.push(d);
       }
