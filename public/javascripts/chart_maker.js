@@ -53,6 +53,8 @@ function draw(data, chartType, pivotOn, filterOn){
   function pivot(){
     if(pivotOn || chartType === 'line'){
 
+      var referenceMatrix = [];
+      var tableMatrix = [];
       var toPivot = [];
       var extractedCols = [
         {key:'yLabel', values:[]}, 
@@ -98,70 +100,134 @@ function draw(data, chartType, pivotOn, filterOn){
             }
           }
         }
-      }
+        makeYLabelsArray();
+      };
+
+      function makeYLabelsArray(){
+        if(data[0][0].yLabel){
+          console.log('Filling yLabels array');
+          for(var i=0;i<data.length;i++){
+            for(var j=0;j<data[i].length;j++){
+              yLabels.push(data[i][j].yLabel);
+            }
+          }
+        }
+        makeZLabelsArray();
+      };
+
+      function makeZLabelsArray(){
+        if(data[0][0].zLabel){
+          console.log('Filling zLabels array');
+          for(var i=0;i<data.length;i++){
+            for(var j=0;j<data[i].length;j++){
+              zLabels.push(data[i][j].zLabel);
+            }
+          }
+        }
+        makeZXLabelsArray();
+      };
+
+      function makeZXLabelsArray(){
+        if(data[0][0].zxLabel){
+          console.log('Filling zxLabels array');
+          for(var i=0;i<data.length;i++){
+            for(var j=0;j<data[i].length;j++){
+              zxLabels.push(data[i][j].zxLabel);
+            }
+          }
+        }
+        makeZYLabelsArray();
+      };
+
+      function makeZYLabelsArray(){
+        if(data[0][0].zyLabel){
+          console.log('Filling zyLabels array');
+          for(var i=0;i<data.length;i++){
+            for(var j=0;j<data[i].length;j++){
+              zyLabels.push(data[i][j].zyLabel);
+            }
+          }
+        }
+        makeZZLabelsArray();
+      };
+
+      function makeZZLabelsArray(){
+        if(data[0][0].zzLabel){
+          console.log('Filling zzLabels array');
+          for(var i=0;i<data.length;i++){
+            for(var j=0;j<data[i].length;j++){
+              zzLabels.push(data[i][j].zzLabel);
+            }
+          }
+        }
+        extractYLabels();
+      };
+
+      // some weird redundancy here between the following and the above
+      function extractYLabels(){
+        for(var i=0;i<data.length;i++){
+          if(data[i][0].yLabel){
+            yLabels.push(data[i][0].yLabel);
+          }
+        }
+        yLabels = unique(yLabels);
+        extractZLabels();
+      };
+
+      function extractZLabels(){
+        for(var i=0;i<data.length;i++){
+          if(data[i][0].zLabel){
+            zLabels.push(data[i][0].zLabel);
+          }
+        }
+        zLabels = unique(zLabels);
+        makeReferenceMatrix();
+      };
+
+      function makeReferenceMatrix(){ 
+        for(var i=0;i<yLabels.length;i++){
+          referenceMatrix[i] = [];
+          for(var j=0;j<zLabels.length;j++){
+            referenceMatrix[i][j] = {yLabel:yLabels[i], zLabel:zLabels[j]};
+          }
+        }
+        makeTableMatrix();
+      };
+
+      function makeTableMatrix(){
+        for(var i=0;i<referenceMatrix.length;i++){
+          tableMatrix[i] = [];
+          for(var j=0;j<referenceMatrix[i].length;j++){
+            var lookupObj = {yLabel: referenceMatrix[i][j].yLabel, zLabel: referenceMatrix[i][j].zLabel}
+            lookup(lookupObj, function(result){
+              tableMatrix[i][j] = result;
+            });
+          }
+        }
+        console.log(tableMatrix);
+        if(pivotOn){ data = tableMatrix; }
+        setD3CanvasVariables();
+      };
+
+      function lookup(lookup, done){
+        var found = 0;
+        for(var i=0;i<data.length;i++){
+          for(var j=0;j<data[i].length;j++){
+            if(data[i][j].yLabel == lookup.yLabel && data[i][j].zLabel == lookup.zLabel){
+              done(data[i][j]);
+              found = 1;
+              break;
+            }
+          }
+        }
+        if(found==0){ done(null); }
+      };
+
     } // end if
-    makeYLabelsArray();
+    else{ setD3CanvasVariables(); }
   }; // end pivot
 
-  function makeYLabelsArray(){
-    if(data[0][0].yLabel){
-      console.log('Filling yLabels array');
-      for(var i=0;i<data.length;i++){
-        for(var j=0;j<data[i].length;j++){
-          yLabels.push(data[i][j].yLabel);
-        }
-      }
-    }
-    makeZLabelsArray();
-  };
 
-  function makeZLabelsArray(){
-    if(data[0][0].zLabel){
-      console.log('Filling zLabels array');
-      for(var i=0;i<data.length;i++){
-        for(var j=0;j<data[i].length;j++){
-          zLabels.push(data[i][j].zLabel);
-        }
-      }
-    }
-    makeZXLabelsArray();
-  };
-
-  function makeZXLabelsArray(){
-    if(data[0][0].zxLabel){
-      console.log('Filling zxLabels array');
-      for(var i=0;i<data.length;i++){
-        for(var j=0;j<data[i].length;j++){
-          zxLabels.push(data[i][j].zxLabel);
-        }
-      }
-    }
-    makeZYLabelsArray();
-  };
-
-  function makeZYLabelsArray(){
-    if(data[0][0].zyLabel){
-      console.log('Filling zyLabels array');
-      for(var i=0;i<data.length;i++){
-        for(var j=0;j<data[i].length;j++){
-          zyLabels.push(data[i][j].zyLabel);
-        }
-      }
-    }
-    makeZZLabelsArray();
-  };
-
-  function makeZZLabelsArray(){
-    if(data[0][0].zzLabel){
-      console.log('Filling zzLabels array');
-      for(var i=0;i<data.length;i++){
-        for(var j=0;j<data[i].length;j++){
-          zzLabels.push(data[i][j].zzLabel);
-        }
-      }
-    }
-    setD3CanvasVariables();
-  };
 
   function setD3CanvasVariables(){
     canvas_x      = $('#canvas').width();
@@ -228,70 +294,8 @@ function draw(data, chartType, pivotOn, filterOn){
     // zx,zy,zzLabels not yet supported
 
     var tableHeader = [];
-    var referenceMatrix = [];
-    var tableMatrix = [];
 
-    extractYLabels();
-
-    function extractYLabels(){
-      for(var i=0;i<data.length;i++){
-        if(data[i][0].yLabel){
-          yLabels.push(data[i][0].yLabel);
-        }
-      }
-      yLabels = unique(yLabels);
-      extractZLabels();
-    };
-
-    function extractZLabels(){
-      for(var i=0;i<data.length;i++){
-        if(data[i][0].zLabel){
-          zLabels.push(data[i][0].zLabel);
-        }
-      }
-      zLabels = unique(zLabels);
-      makeReferenceMatrix();
-    };
-
-    function makeReferenceMatrix(){ 
-      for(var i=0;i<yLabels.length;i++){
-        referenceMatrix[i] = [];
-        for(var j=0;j<zLabels.length;j++){
-          referenceMatrix[i][j] = {yLabel:yLabels[i], zLabel:zLabels[j]};
-        }
-      }
-      makeTableMatrix();
-    };
-
-
-    function makeTableMatrix(){
-      for(var i=0;i<referenceMatrix.length;i++){
-        tableMatrix[i] = [];
-        for(var j=0;j<referenceMatrix[i].length;j++){
-          var lookupObj = {yLabel: referenceMatrix[i][j].yLabel, zLabel: referenceMatrix[i][j].zLabel}
-          lookup(lookupObj, function(result){
-            tableMatrix[i][j] = result;
-          });
-        }
-      }
-      console.log(tableMatrix);
-      if(pivotOn){ data = tableMatrix; }
-      addHeaders();
-    };
-
-    function lookup(lookup, done){
-      var found = 0;
-      for(var i=0;i<data.length;i++){
-        for(var j=0;j<data[i].length;j++){
-          if(data[i][j].yLabel == lookup.yLabel && data[i][j].zLabel == lookup.zLabel){
-            done(data[i][j]);
-            found = 1;
-            break;
-          }
-        }
-      }
-      if(found==0){ done(null); }
-    }
+    addHeaders();
 
     function addHeaders(){
       data.unshift([]);
