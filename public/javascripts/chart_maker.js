@@ -5,7 +5,7 @@ function draw(data, chartType, pivotOn, filterOn){
 
   // describe data
   var data = JSON.parse(JSON.stringify(data));
-  var values   = []
+  var values   = [];
   var xLabels  = [];
   var yLabels  = [];
   var zLabels  = [];
@@ -15,7 +15,7 @@ function draw(data, chartType, pivotOn, filterOn){
 
 
   // describe d3 canvas
-  var margin  = {};
+  var margin   = {};
   var canvas_x = null;
   var canvas_y = null;
   var max      = null;
@@ -46,6 +46,7 @@ function draw(data, chartType, pivotOn, filterOn){
         xLabels.push(data[0][i].xLabel) 
       }
     }
+    addValuesToFilterAndPivot(xLabels);
     pivot();
   };
 
@@ -77,7 +78,6 @@ function draw(data, chartType, pivotOn, filterOn){
 
       function extractDataToPivot(columns){
         for(var i=0;i<columns.length;i++){
-          console.log('pivoting '+columns[i]);
           for(var j=0;j<data.length;j++){
             for(var k=0;k<data[j].length;k++){
               if(data[j][k].xLabel == columns[i]){
@@ -86,13 +86,11 @@ function draw(data, chartType, pivotOn, filterOn){
             }
           }
           extractedAxisNames[i].value = columns[i];
-          console.log('done pivoting ' + columns[i]);
         }
         applyExtractedData();
       };
 
       function applyExtractedData(){
-        console.log('Applying extracted rows');
         for(var i=0;i<extractedCols.length;i++){
           for(var j=0;j<extractedCols[i].values.length;j++){
             for(var k=0;k<data[j].length;k++){
@@ -278,7 +276,7 @@ function draw(data, chartType, pivotOn, filterOn){
       }
       console.log(tableMatrix);
       if(pivotOn){ data = tableMatrix; }
-      getTableHeader();
+      addHeaders();
     };
 
     function lookup(lookup, done){
@@ -295,17 +293,37 @@ function draw(data, chartType, pivotOn, filterOn){
       if(found==0){ done(null); }
     }
 
-    function getTableHeader(){
-      console.log(data);
-      for(var i=0; i<data[0].length; i++){
-        var d = {};
-        d.value = data[0][i].xLabel
-        d.xLabel = data[0][i].xLabel;
-        tableHeader.push(d);
+    function addHeaders(){
+      data.unshift([]);
+      for(var i=0;i<zLabels.length;i++){
+        data[0][i] = {};
+        data[0][i].xLabel = 'Header'
+        data[0][i].value = zLabels[i];
       }
-      data.unshift(tableHeader);
+      addRowLabels();
+    }
+
+    function addRowLabels(){
+      for(var i=0;i<=yLabels.length;i++){
+        data[i].unshift({});
+        data[i][0].xLabel = 'Column Label';
+        data[i][0].value = yLabels[i-1];
+      }
+      console.log(data);
       makeTable();
-    };
+    }
+
+    // function extractTableHeader(){
+    //   console.log(data);
+    //   for(var i=0; i<data[0].length; i++){
+    //     var d = {};
+    //     d.value = data[0][i].xLabel
+    //     d.xLabel = data[0][i].xLabel;
+    //     tableHeader.push(d);
+    //   }
+    //   data.unshift(tableHeader);
+    //   makeTable();
+    // };
 
     function makeTable(){
 
@@ -313,22 +331,22 @@ function draw(data, chartType, pivotOn, filterOn){
         .append('table')
         .attr('class', 'table table-hover table-condensed table-responsive');
 
-      var thead = d3.select('table')
-        .append('thead')
-        .append('tr');
+      // var thead = d3.select('table')
+      //   .append('thead')
+      //   .append('tr');
 
-      var th = thead.selectAll('th')
-        .data(data.shift())
-        .enter()
-        .append('th')
-        .attr()
-        .attr('data-value', function(d)    { return d.value; })
-        .attr('data-name',  function(d)    { return d.name; })
-        .attr('data-row',   function(d)    { return 'tableHeader'; })
-        .attr('data-col',   function(d)    { return d.xLabel; })
-        .attr('data-x-co',  function(d,i,j){ return j; })
-        .attr('data-y-co',  function(d,i)  { return i; })
-        .text(function(d){ return d.value; });
+      // var th = thead.selectAll('th')
+      //   .data(data.shift())
+      //   .enter()
+      //   .append('th')
+      //   .attr()
+      //   .attr('data-value', function(d)    { return d.value; })
+      //   .attr('data-name',  function(d)    { return d.name; })
+      //   .attr('data-row',   function(d)    { return 'tableHeader'; })
+      //   .attr('data-col',   function(d)    { return d.xLabel; })
+      //   .attr('data-x-co',  function(d,i,j){ return j; })
+      //   .attr('data-y-co',  function(d,i)  { return i; })
+      //   .text(function(d){ return d.value; });
 
       var tbody = d3.select('table')
         .append('tbody');
@@ -339,16 +357,16 @@ function draw(data, chartType, pivotOn, filterOn){
         .append('tr');
 
       var td = tr.selectAll('td')
-        .data(function(d){ return d; })
+        .data(function(d){ /*console.log(d);*/ return d; })
         .enter()
         .append('td')
-        .attr('data-value',function(d)    { return d.value; })
-        .attr('data-name', function(d)    { return d.name; })
-        .attr('data-row',  function(d)    { return d.yLabel; })
-        .attr('data-col',  function(d)    { return d.xLabel; })
+        .attr('data-value',function(d)    { if(d && d.value)  return d.value; })
+        .attr('data-name', function(d)    { if(d && d.name)   return d.name; })
+        .attr('data-row',  function(d)    { if(d && d.yLabel) return d.yLabel; })
+        .attr('data-col',  function(d)    { if(d && d.xLabel) return d.xLabel; })
         .attr('data-x-co', function(d,i,j){ return j; })
         .attr('data-y-co', function(d,i)  { return i; })
-        .text(function(d){ return d.value; });
+        .text(function(d){ if(d && d.value){return d.value} else{return ''}});
     };
 
   }; // end table
