@@ -55,7 +55,9 @@ block content
       currentType = $(this).attr('data-value');
       draw(table[currentTable].rows, currentType);
       $('.btn').not(this).removeClass('active'); 
-      $(this).addClass('active'); 
+      $(this).addClass('active');
+      console.log('currentTable: '+currentTable+' currentType: '+currentType);
+      readyPivot();
     });
 
     // new data set
@@ -67,20 +69,24 @@ block content
       $(this).addClass('active');
       $('#chartTitle').html(table[currentTable].title);
       $('#chartDesc').html(table[currentTable].description);
+      console.log('currentTable: '+currentTable+' currentType: '+currentType);
+      readyPivot();
       });
-
-    // pivot
-    $('#pivot li').click(function(){
-      draw(table[currentTable].rows, currentType, $(this).attr('data-pivot'));
-      });
-
 
     function addValuesToFilterAndPivot(valuesArray){
       $('#pivot ul').empty();
       $('#filter ul').empty();
-      console.log(valuesArray);
       for(var i=0;i<valuesArray.length;i++){
         $('#pivot ul').append('<li data-pivot="'+ valuesArray[i] +'"><a href="#">'+ valuesArray[i] +'</a></li>');
         $('#filter ul').append('<li data-filter="'+ valuesArray[i] +'"><a href="#">'+ valuesArray[i] +'</a></li>');
       }
+      readyPivot();
     };
+
+    // pivot
+    function readyPivot(){
+      $('#pivot li').click(function(){
+        console.log('CALLED');
+        draw(table[currentTable].rows, currentType, $(this).attr('data-pivot'));
+        });
+    }
