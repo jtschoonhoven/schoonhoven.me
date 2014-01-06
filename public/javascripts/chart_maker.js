@@ -100,65 +100,10 @@ function draw(data, chartType, pivotOn, filterOn){
             }
           }
         }
-        makeYLabelsArray();
-      };
-
-      function makeYLabelsArray(){
-        if(data[0][0].yLabel){
-          for(var i=0;i<data.length;i++){
-            for(var j=0;j<data[i].length;j++){
-              yLabels.push(data[i][j].yLabel);
-            }
-          }
-        }
-        makeZLabelsArray();
-      };
-
-      function makeZLabelsArray(){
-        if(data[0][0].zLabel){
-          for(var i=0;i<data.length;i++){
-            for(var j=0;j<data[i].length;j++){
-              zLabels.push(data[i][j].zLabel);
-            }
-          }
-        }
-        makeZXLabelsArray();
-      };
-
-      function makeZXLabelsArray(){
-        if(data[0][0].zxLabel){
-          for(var i=0;i<data.length;i++){
-            for(var j=0;j<data[i].length;j++){
-              zxLabels.push(data[i][j].zxLabel);
-            }
-          }
-        }
-        makeZYLabelsArray();
-      };
-
-      function makeZYLabelsArray(){
-        if(data[0][0].zyLabel){
-          for(var i=0;i<data.length;i++){
-            for(var j=0;j<data[i].length;j++){
-              zyLabels.push(data[i][j].zyLabel);
-            }
-          }
-        }
-        makeZZLabelsArray();
-      };
-
-      function makeZZLabelsArray(){
-        if(data[0][0].zzLabel){
-          for(var i=0;i<data.length;i++){
-            for(var j=0;j<data[i].length;j++){
-              zzLabels.push(data[i][j].zzLabel);
-            }
-          }
-        }
         extractYLabels();
       };
 
-      // some weird redundancy here between the following and the above
+      // take all distinct yLabels and add them to an array
       function extractYLabels(){
         for(var i=0;i<data.length;i++){
           if(data[i][0].yLabel){
