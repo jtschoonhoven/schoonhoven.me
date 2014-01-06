@@ -49,7 +49,6 @@ block content
     $('[data-value="' + currentType + '"]').addClass('active');
 
     draw(table[currentTable].rows, currentType);
-    addColumnsToPivotAndFilterBtns();
 
     // new chart type
     $('#chartTypes .btn').click(function(){ 
@@ -68,7 +67,6 @@ block content
       $(this).addClass('active');
       $('#chartTitle').html(table[currentTable].title);
       $('#chartDesc').html(table[currentTable].description);
-      addColumnsToPivotBtn();
       });
 
     // pivot
@@ -77,14 +75,12 @@ block content
       });
 
 
-    function addColumnsToPivotAndFilterBtns(){
+    function addValuesToFilterAndPivot(valuesArray){
       $('#pivot ul').empty();
       $('#filter ul').empty();
-      $('th').each(function(i,d){
-        $('#pivot ul').append('<li data-pivot="'+ $(this).html() +'"><a href="#">'+ $(this).html() +'</a></li>');
-        $('#filter ul').append('<li data-filter="'+ $(this).html() +'"><a href="#">'+ $(this).html() +'</a></li>');
-      });
-      $('th').each(function(i){
-        $(this).css('textTransform', 'capitalize');
-      });
+      console.log(valuesArray);
+      for(var i=0;i<valuesArray.length;i++){
+        $('#pivot ul').append('<li data-pivot="'+ valuesArray[i] +'"><a href="#">'+ valuesArray[i] +'</a></li>');
+        $('#filter ul').append('<li data-filter="'+ valuesArray[i] +'"><a href="#">'+ valuesArray[i] +'</a></li>');
+      }
     };

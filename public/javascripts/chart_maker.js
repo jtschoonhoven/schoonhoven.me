@@ -57,17 +57,11 @@ function draw(data, chartType, pivotOn, filterOn){
       var tableMatrix = [];
       var toPivot = [];
       var extractedCols = [
-        {key:'yLabel', values:[]}, 
-        {key:'zLabel', values:[]},
-        {key:'zxLabel', values:[]},
-        {key:'zyLabel', values:[]},
-        {key:'zzLabel', values:[]}];
-      var extractedAxisNames = [
-        {key:'yAxis', value:null}, 
-        {key:'zAxis', value:null},
-        {key:'zxAxis', value:null},
-        {key:'zyAxis', value:null},
-        {key:'zzAxis', value:null}];
+        {key:'yLabel',  axisName:'yAxis',  values:[]}, 
+        {key:'zLabel',  axisName:'zAxis',  values:[]},
+        {key:'zxLabel', axisName:'zxAxis', values:[]},
+        {key:'zyLabel', axisName:'zyAxis', values:[]},
+        {key:'zzLabel', axisName:'zzAxis', values:[]}];
 
       getColumnsToPivot();
 
@@ -78,20 +72,26 @@ function draw(data, chartType, pivotOn, filterOn){
         extractDataToPivot(toPivot);
       };
 
+      // for each column NOT pivoted, remove from data obj and
+      // assign to y-zz axis in extractedCols obj
       function extractDataToPivot(columns){
         for(var i=0;i<columns.length;i++){
           for(var j=0;j<data.length;j++){
             for(var k=0;k<data[j].length;k++){
               if(data[j][k].xLabel == columns[i]){
+                // remove from data obj and assign to axis
                 extractedCols[i].values.push(data[j].splice(k,1));
               }
             }
           }
-          extractedAxisNames[i].value = columns[i];
+          extractedCols[i].axisName = columns[i];
         }
         applyExtractedData();
       };
 
+      // for the target data left in the data obj, apply values from
+      // extractedCols as properties of the value so that original value
+      // now equals target yLabel, zLabels, etc.
       function applyExtractedData(){
         for(var i=0;i<extractedCols.length;i++){
           for(var j=0;j<extractedCols[i].values.length;j++){
@@ -105,7 +105,6 @@ function draw(data, chartType, pivotOn, filterOn){
 
       function makeYLabelsArray(){
         if(data[0][0].yLabel){
-          console.log('Filling yLabels array');
           for(var i=0;i<data.length;i++){
             for(var j=0;j<data[i].length;j++){
               yLabels.push(data[i][j].yLabel);
@@ -117,7 +116,6 @@ function draw(data, chartType, pivotOn, filterOn){
 
       function makeZLabelsArray(){
         if(data[0][0].zLabel){
-          console.log('Filling zLabels array');
           for(var i=0;i<data.length;i++){
             for(var j=0;j<data[i].length;j++){
               zLabels.push(data[i][j].zLabel);
@@ -129,7 +127,6 @@ function draw(data, chartType, pivotOn, filterOn){
 
       function makeZXLabelsArray(){
         if(data[0][0].zxLabel){
-          console.log('Filling zxLabels array');
           for(var i=0;i<data.length;i++){
             for(var j=0;j<data[i].length;j++){
               zxLabels.push(data[i][j].zxLabel);
@@ -141,7 +138,6 @@ function draw(data, chartType, pivotOn, filterOn){
 
       function makeZYLabelsArray(){
         if(data[0][0].zyLabel){
-          console.log('Filling zyLabels array');
           for(var i=0;i<data.length;i++){
             for(var j=0;j<data[i].length;j++){
               zyLabels.push(data[i][j].zyLabel);
@@ -153,7 +149,6 @@ function draw(data, chartType, pivotOn, filterOn){
 
       function makeZZLabelsArray(){
         if(data[0][0].zzLabel){
-          console.log('Filling zzLabels array');
           for(var i=0;i<data.length;i++){
             for(var j=0;j<data[i].length;j++){
               zzLabels.push(data[i][j].zzLabel);
@@ -204,7 +199,6 @@ function draw(data, chartType, pivotOn, filterOn){
             });
           }
         }
-        console.log(tableMatrix);
         if(pivotOn){ data = tableMatrix; }
         setD3CanvasVariables();
       };
@@ -313,7 +307,6 @@ function draw(data, chartType, pivotOn, filterOn){
         data[i][0].xLabel = 'Column Label';
         data[i][0].value = yLabels[i-1];
       }
-      console.log(data);
       makeTable();
     }
 
