@@ -28,6 +28,15 @@ app.get('/pascal', function(req,res){
   res.render('pascal'); 
 });
 
+app.get('/phyllotaxis', function(req,res){ 
+  res.render('phyllotaxis'); 
+});
+
+// legacy
+app.get('/javascripts/phyllotaxis', function(req,res){ 
+  res.redirect('phyllotaxis'); 
+});
+
 app.get('/chart-maker', function(req,res){ 
   res.render('chart_maker', { tableObj: JSON.stringify(data) }); 
 });

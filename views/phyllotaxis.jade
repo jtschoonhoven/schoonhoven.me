@@ -1,0 +1,39 @@
+extends layout
+
+block content
+
+  hr
+  .row
+    h2#chartTitle Disk Phyllotaxis
+    p#chartDesc Demonstrates &nbsp;
+      a(href="http://en.wikipedia.org/wiki/Phyllotaxis") Disk Phyllotaxis. &nbsp;
+      | In progress.
+
+    .panel.panel-primary(ng-controller="PhyllotaxisCtrl")
+      .panel-heading
+
+        form.form-inline
+          .form-group
+            label Disks:
+            input.form-control(type="number" ng-model="n" value="{{ n }}")
+
+      .panel-body
+        br
+        #canvas.col-xs-offset-3.col-xs-6
+
+  script.
+  
+    function PhyllotaxisCtrl($scope) {
+
+      $scope.n = 5;
+
+
+      $scope.draw = function(data, n) {
+
+        // canvas dimensions
+        var width = $('#canvas').width();
+        var height = (Math.sqrt(3)/2) * width;
+
+      }
+
+       
