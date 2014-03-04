@@ -33,7 +33,7 @@ app.get('/phyllotaxis', function(req,res){
 });
 
 // legacy
-app.get('/javascripts/phyllotaxis', function(req,res){ 
+app.get('/javascripts/phyllotaxis.html', function(req,res){ 
   res.redirect('phyllotaxis'); 
 });
 
