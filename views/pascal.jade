@@ -5,8 +5,9 @@ block content
   hr
   .row
     h2#chartTitle Pascal
-    p#chartDesc Paints a 
-      a(href="http://en.wikipedia.org/wiki/Pascal's_triangle") Pascal's Triangle.
+    p#chartDesc Draws a 
+      a(href="http://en.wikipedia.org/wiki/Pascal's_triangle") Pascal's Triangle. &nbsp;
+      | When the odd numbers are filled in, a fractal emerges.
     .panel.panel-primary(ng-controller="PascalCtrl")
       .panel-heading
 
@@ -15,21 +16,24 @@ block content
             label Levels:
             input.form-control(type="number" ng-model="n" value="{{ n }}")
 
-          .form-group
-
           .checkbox
             label Labels:
               input(type="checkbox" ng-model="drawLabels" ng-checked="{{drawLabels}}")
 
+          .checkbox
+            label Triangles:
+              input(type="checkbox" ng-model="drawTriangles" ng-checked="{{drawTriangles}}")
+
       .panel-body
-        #canvas
+        br
+        #canvas.col-xs-offset-3.col-xs-6
 
   script.
   
     function PascalCtrl($scope) {
 
       $scope.rows = [[1]];
-      $scope.n = function(){ return $scope.rows.length; }();
+      $scope.n = $scope.rows.length;
       $scope.drawLabels = true;
       $scope.drawTriangles = true;
       $scope.$watchCollection('[n, drawLabels, drawTriangles]', function() { $scope.getNRows($scope.n); $scope.draw($scope.rows, $scope.n) });
@@ -40,7 +44,7 @@ block content
         var n = (n>0) ? n : 1;
 
         // canvas dimensions
-        var width = 400
+        var width = $('#canvas').width();
         var height = (Math.sqrt(3)/2) * width;
 
         // size of sub-triangles, scaled to fit canvas
