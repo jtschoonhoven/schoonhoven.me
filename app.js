@@ -24,6 +24,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function(req,res){ res.render('index') });
 
+app.get('/pascal', function(req,res){ 
+  res.render('pascal'); 
+});
+
 app.get('/chart-maker', function(req,res){ 
   res.render('chart_maker', { tableObj: JSON.stringify(data) }); 
 });
