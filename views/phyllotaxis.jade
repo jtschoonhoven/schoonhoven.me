@@ -14,26 +14,88 @@ block content
 
         form.form-inline
           .form-group
-            label Disks:
-            input.form-control(type="number" ng-model="n" value="{{ n }}")
+            label Seedlings:
+            input.form-control(type="number" ng-model="seeds" value="{{ seeds }}")
+
+          .form-group
+            label Density:
+            input.form-control(type="number" ng-model="density" value="{{ density }}")
+
+          .form-group
+            label Radii:
+            input.form-control(type="number" ng-model="radii" value="{{ radii }}")
 
       .panel-body
-        br
-        #canvas.col-xs-offset-3.col-xs-6
+        #canvas
 
   script.
   
     function PhyllotaxisCtrl($scope) {
 
-      $scope.n = 5;
+      // options
+      $scope.seeds   = 20;
+      $scope.density = 5;
+      $scope.radii   = 20;
 
+      function draw(){
 
-      $scope.draw = function(data, n) {
+        var data = [];
 
-        // canvas dimensions
-        var width = $('#canvas').width();
-        var height = (Math.sqrt(3)/2) * width;
+        for(var i=data.length; i<$scope.seeds; i++){
+          data.push(1);
+        };
 
-      }
+        for(var i=$scope.seeds; i>data.length; i--){
+          data.splice(i,1);
+        };
+
+        // dimensions
+        var canvas_w = $("#canvas").width();
+        var canvas_h = $(window).height()-400;
+        var margin = {top: 10, right: 10, bottom: 10, left: 10}
+
+        // variables
+        var s = $scope.seeds > 0 ? $scope.seeds : 0;
+        var d = $scope.density > 0 ? $scope.density : 0;
+        var r = $scope.radii > 0 ? $scope.radii : 0;
+        var a = 137.508;
+
+        var canvas = d3.select("#canvas")
+          .selectAll("svg")
+          .data([1])
+          .enter()
+          .append("svg")
+
+        d3.select("svg")
+          .attr("width", function(){ return canvas_w; })
+          .attr("height", canvas_h);
+
+        var group = canvas.selectAll("g")
+          .data([1])
+          .enter()
+          .append("g")
+
+        d3.selectAll("g")
+          .attr("transform", function(){ return "translate(" +canvas_w/2+ "," +canvas_h/2+ ")"; });
+
+        var circles = group.selectAll("circle").data(data);
+        circles.exit().remove();
+        circles.enter().append("circle");
+        d3.selectAll("circle")
+          .attr("cx", function(_,i){ return d*Math.sqrt(i); })
+          .attr("cy", 0)
+          .attr("r", r)
+          .attr("transform", function(_,i){ return "rotate(" +(a*i)+ ")"; })
+          .style("fill", "none")
+          .style("stroke-width", 2)
+          .style("stroke", "black")
+        };
+
+      // draw immediately, on resize, and on option change
+      draw();
+      $(window).resize(function(){ draw(); });
+      $scope.$watchCollection('[seeds, density, radii]', function(){ draw(); });
+
+    }
 
        
