@@ -2,50 +2,45 @@ extends layout
 
 block content
 
-  hr
   .row
-    h2#chartTitle Disk Phyllotaxis
-    p#chartDesc 
-      a(href="http://en.wikipedia.org/wiki/Phyllotaxis") Disk Phyllotaxis 
-      | is the pattern in which seeds are arranged around the face of a sunflower.
-      | It is related to the golden ratio and described mathematically by 
-      a(href="http://en.wikipedia.org/wiki/Fermat's_spiral") Fermat's Spiral. 
-      | More importantly, the pattern can be manipulated into psychedelic patterns
-      | using the controls below.
+    form.form-inline(ng-controller="PhyllotaxisCtrl")
+      .form-group.col-xs-4
+        label Seedlings:
+        input.input-sm.form-control(type="number" ng-model="seeds" value="{{ seeds }}")
 
-    .panel.panel-primary(ng-controller="PhyllotaxisCtrl")
-      .panel-heading
+      .form-group.col-xs-4
+        label Density:
+        input.input-sm.form-control(type="number" ng-model="density" value="{{ density }}")
 
-        form.form-inline
-          .form-group
-            label Seedlings:
-            input.input-sm.form-control(type="number" ng-model="seeds" value="{{ seeds }}")
+      .form-group.col-xs-4
+        label Radii:
+        input.input-sm.form-control(type="number" ng-model="radii" value="{{ radii }}")
+    
+  hr
+  h2#chartTitle Disk Phyllotaxis
+  p#chartDesc 
+    a(href="http://en.wikipedia.org/wiki/Phyllotaxis") Disk Phyllotaxis 
+    | is the pattern in which seeds are arranged around the face of a sunflower.
+    | It is related to the golden ratio and described mathematically by 
+    a(href="http://en.wikipedia.org/wiki/Fermat's_spiral") Fermat's Spiral. 
+    | More importantly, the pattern can be manipulated into psychedelic patterns
+    | using the controls below.
 
-          .form-group
-            label Density:
-            input.input-sm.form-control(type="number" ng-model="density" value="{{ density }}")
-
-          .form-group
-            label Radii:
-            input.input-sm.form-control(type="number" ng-model="radii" value="{{ radii }}")
-
-      .panel-body
-        #canvas
 
   script.
   
     function PhyllotaxisCtrl($scope) {
 
       // options
-      $scope.seeds   = 160;
-      $scope.density = 15;
-      $scope.radii   = 5;
+      $scope.seeds   = 80;
+      $scope.density = 40;
+      $scope.radii   = 2;
 
       function draw(){
 
         // dimensions
-        var canvas_w = $("#canvas").width();
-        var canvas_h = ($(window).height()-400) > 500 ? ($(window).height()-500) : 500;
+        var canvas_w = $("body").width();
+        var canvas_h = ($(window).height()) > 500 ? ($(window).height()) : 500;
         var margin = {top: 10, right: 10, bottom: 10, left: 10}
 
         // variables
@@ -56,12 +51,14 @@ block content
 
         var data = new Array(s);
 
-        var canvas = d3.select("#canvas");
+        var canvas = d3.select("body");
 
         var svg = canvas.selectAll("svg").data([1]);
-        svg.enter().append("svg");
+        svg.enter().insert("svg", ":first-child");
         svg.attr("width", function(){ return canvas_w; })
-          .attr("height", canvas_h);
+          .attr("height", canvas_h)
+          .style("position", "absolute")
+          .style("z-index", -1);
 
         var group = svg.selectAll("g").data([1]);
         group.enter().append("g");

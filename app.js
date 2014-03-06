@@ -37,6 +37,10 @@ app.get('/javascripts/phyllotaxis.html', function(req,res){
   res.redirect('phyllotaxis'); 
 });
 
+app.get('/idea', function(req,res){ 
+  res.render('idea'); 
+});
+
 app.get('/chart-maker', function(req,res){ 
   res.render('chart_maker', { tableObj: JSON.stringify(data) }); 
 });

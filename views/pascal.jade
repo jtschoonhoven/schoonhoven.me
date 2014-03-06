@@ -2,31 +2,24 @@ extends layout
 
 block content
 
-  hr
   .row
-    h2#chartTitle Pascal
-    p#chartDesc Draws a 
-      a(href="http://en.wikipedia.org/wiki/Pascal's_triangle") Pascal's Triangle. &nbsp;
-      | When the odd numbers are filled in, a fractal emerges.
-    .panel.panel-primary(ng-controller="PascalCtrl")
-      .panel-heading
+    form.form-inline(ng-controller="PascalCtrl")
+      .form-group.col-xs-6
+        label Levels:
+        input.form-control(type="number" ng-model="n" value="{{ n }}")
 
-        form.form-inline
-          .form-group
-            label Levels:
-            input.form-control(type="number" ng-model="n" value="{{ n }}")
-
-          .checkbox
-            label Labels:
-              input(type="checkbox" ng-model="drawLabels" ng-checked="{{drawLabels}}")
-
-          .checkbox
-            label Triangles:
-              input(type="checkbox" ng-model="drawTriangles" ng-checked="{{drawTriangles}}")
-
-      .panel-body
+      .checkbox.col-xs-6
+        label Labels:
+          input(type="checkbox" ng-model="drawLabels" ng-checked="{{drawLabels}}")
         br
-        #canvas.col-xs-offset-3.col-xs-6
+        label Triangles:
+          input(type="checkbox" ng-model="drawTriangles" ng-checked="{{drawTriangles}}")
+
+  hr
+  h2#chartTitle Pascal
+  p#chartDesc Draws a 
+    a(href="http://en.wikipedia.org/wiki/Pascal's_triangle") Pascal's Triangle. &nbsp;
+    | When the odd numbers are filled in, a fractal emerges.
 
   script.
   
@@ -37,33 +30,45 @@ block content
       $scope.drawLabels = true;
       $scope.drawTriangles = true;
       $scope.$watchCollection('[n, drawLabels, drawTriangles]', function() { $scope.getNRows($scope.n); $scope.draw($scope.rows, $scope.n) });
+      $(window).resize(function(){ $scope.draw($scope.rows, $scope.n)  });
+      $(window).on("scroll", function(){ 
+        console.log('ok')
+        $(window).off("scroll");
+      })
 
 
       $scope.draw = function(data, n) {
 
-        var n = (n>0) ? n : 1;
+        var n = n > 0 ? n : 1;
 
         // canvas dimensions
-        var width = $('#canvas').width();
-        var height = (Math.sqrt(3)/2) * width;
+        var width = $(window).width() > $(window).height() ? $(window).height()/(Math.sqrt(3)/2) : $(window).width();
+        var height = $(window).width() > $(window).height() ? $(window).width() : $(window).width()*(Math.sqrt(3)/2);
 
         // size of sub-triangles, scaled to fit canvas
         var w = width/(data[n-1].length);
         var h = (Math.sqrt(3)/2) * w;
 
-        // only create the svg if it doesn't already exist
-        if(!d3.select("svg")[0][0]) {
-          var canvas = d3.select("#canvas")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
-          }
-        else { var canvas = d3.select("svg"); }
+        var body = d3.select("body");
 
-        var group = canvas.selectAll("g").data(data);
-          group.exit().remove();
-          group.enter().append("g");
-          group.attr("transform", function(d,i) { return "translate(" +(data.length-(i+1))*w/2+ "," +i*h+ ")" });
+        var svg = body.selectAll("svg").data([1]);
+        svg.enter().insert("svg", ":first-child");
+        svg.attr("width", $(window).width())
+          .attr("height", $(window).height())
+          .style("position", "absolute")
+          .style("z-index", -1);
+
+        var canvas = svg.selectAll(".canvas").data([1]);
+        canvas.enter().append("g");
+        canvas.attr("class", "canvas")
+          .attr("transform", function(d,i){ 
+            return "translate(" +($(window).width()/2-width/2)+ "," +($(window).height()-$(window).height())+ ")"; 
+          });
+
+        var group = canvas.selectAll(".group").data(data);
+        group.enter().append("g");
+        group.attr("class", "group").attr("transform", function(d,i) { return "translate(" +((data.length-(i+1))*w/2)+ "," +i*h+ ")" });
+        group.exit().remove();
 
         var triangles = group.selectAll(".triangle").data(function(d) { return d; });
           if($scope.drawTriangles) triangles.enter().insert("path", ":first-child")
