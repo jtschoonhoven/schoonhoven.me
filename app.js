@@ -32,13 +32,13 @@ app.get('/phyllotaxis', function(req,res){
   res.render('phyllotaxis'); 
 });
 
+app.get('/i', function(req,res){ 
+  res.render('spike'); 
+});
+
 // legacy
 app.get('/javascripts/phyllotaxis.html', function(req,res){ 
   res.redirect('phyllotaxis'); 
-});
-
-app.get('/idea', function(req,res){ 
-  res.render('idea'); 
 });
 
 app.get('/chart-maker', function(req,res){ 
